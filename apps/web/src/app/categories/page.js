@@ -3,6 +3,8 @@ import AppNav from "../_components/AppNav.js";
 import { deleteCategory, updateCategory } from "./actions.js";
 import CategoryForm from "./CategoryForm.js";
 
+export const dynamic = "force-dynamic";
+
 export default async function CategoriesPage() {
 	const categories = await category.findAll();
 

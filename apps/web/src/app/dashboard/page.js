@@ -5,6 +5,8 @@ function formatAmount(amount) {
 	return Number(amount ?? 0).toFixed(2);
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
 	const [summary, categories] = await Promise.all([
 		expense.summary(),
