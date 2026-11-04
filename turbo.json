@@ -104,6 +104,17 @@
 				"ADMIN_NAME"
 			]
 		},
+		"db:studio": {
+			"cache": false,
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB"
+			]
+		},
 		"dev": {
 			"cache": false,
 			"persistent": true,

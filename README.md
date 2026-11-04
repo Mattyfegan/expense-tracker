@@ -25,12 +25,23 @@ This project was built using the [OpenCode](https://opencode.ai) harness with **
 
 ## Milestones
 
-- [x] Milestone 0 — Scaffold & run
-- [x] Milestone 1 — Prisma models (Category + Expense)
-- [ ] Milestone 2 — Query helpers (CRUD layer)
-- [ ] Milestone 3 — Routes & actions
-- [ ] Milestone 4 — UI
-- [ ] Milestone 5 — Tests, lint & build
+- [x] **Milestone 0 — Scaffold & run**
+  Generate the Quark project and get it running locally. *Done when:* the app boots, the database is migrated, and `/api/health` is green.
+
+- [x] **Milestone 1 — Prisma models (Category + Expense)**
+  Define the two data shapes and their one-to-many relationship. *Done when:* `db:generate` + `db:migrate` succeed and the tables exist in Postgres.
+
+- [x] **Milestone 2 — Query helpers (CRUD layer)**
+  Reusable create/read/update/delete functions with filtering and pagination. *Done when:* all five helpers exist for both models and a test passes.
+
+- [ ] **Milestone 3 — Routes & actions**
+  Wire the helpers to the web via Server Components and Zod-validated Server Actions. *Done when:* create/edit/delete work in the browser and bad input is rejected.
+
+- [ ] **Milestone 4 — UI**
+  Build the pages and forms with the shared UI kit. *Done when:* every CRUD action is reachable with proper loading/empty/error states.
+
+- [ ] **Milestone 5 — Tests, lint & build**
+  Prove the app works and compiles for production. *Done when:* `pnpm test`, `pnpm lint`, and `pnpm build` all pass.
 
 ## Getting Started
 

@@ -362,3 +362,118 @@ export const file = {
 		return prisma.file.count({ where });
 	},
 };
+
+// Category queries
+//
+// Deleting a category cascades to its expenses (`onDelete: Cascade` on the
+// Expense.categoryId relation), so one delete removes the whole subtree.
+export const category = {
+	findAll: (options = {}) => {
+		const { skip = 0, take = 50 } = options;
+		return prisma.category.findMany({
+			skip,
+			take,
+			include: { _count: { select: { expenses: true } } },
+			orderBy: { name: "asc" },
+		});
+	},
+
+	findById: (id) => {
+		return prisma.category.findUnique({
+			where: { id },
+			include: { _count: { select: { expenses: true } } },
+		});
+	},
+
+	create: (data) => {
+		return prisma.category.create({ data });
+	},
+
+	update: (id, data) => {
+		return prisma.category.update({ where: { id }, data });
+	},
+
+	delete: (id) => {
+		return prisma.category.delete({ where: { id } });
+	},
+
+	count: (where = {}) => {
+		return prisma.category.count({ where });
+	},
+};
+
+/**
+ * Builds the `where` clause shared by `expense.findAll` and `expense.count`,
+ * so pagination and total counts agree on the same filters.
+ *
+ * - categoryId: exact match
+ * - start / end: inclusive date range on `date`
+ * - q: case-insensitive substring match on `description` and `note`
+ */
+function buildExpenseWhere(options) {
+	const { categoryId, start, end, q } = options;
+	const where = {};
+
+	if (categoryId) {
+		where.categoryId = categoryId;
+	}
+
+	if (start || end) {
+		where.date = {};
+		if (start) where.date.gte = new Date(start);
+		if (end) where.date.lte = new Date(end);
+	}
+
+	if (q) {
+		where.OR = [
+			{ description: { contains: q, mode: "insensitive" } },
+			{ note: { contains: q, mode: "insensitive" } },
+		];
+	}
+
+	return where;
+}
+
+// Expense queries
+export const expense = {
+	findAll: (options = {}) => {
+		const { skip = 0, take = 50 } = options;
+		return prisma.expense.findMany({
+			skip,
+			take,
+			where: buildExpenseWhere(options),
+			include: { category: true },
+			orderBy: { date: "desc" },
+		});
+	},
+
+	findById: (id) => {
+		return prisma.expense.findUnique({
+			where: { id },
+			include: { category: true },
+		});
+	},
+
+	create: (data) => {
+		return prisma.expense.create({
+			data,
+			include: { category: true },
+		});
+	},
+
+	update: (id, data) => {
+		return prisma.expense.update({
+			where: { id },
+			data,
+			include: { category: true },
+		});
+	},
+
+	delete: (id) => {
+		return prisma.expense.delete({ where: { id } });
+	},
+
+	count: (options = {}) => {
+		return prisma.expense.count({ where: buildExpenseWhere(options) });
+	},
+};

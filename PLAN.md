@@ -35,9 +35,9 @@ Each layer does one job:
 
 ## Progress tracker
 
-- [ ] Milestone 0 — Scaffold & run
-- [ ] Milestone 1 — Prisma models
-- [ ] Milestone 2 — Query helpers (CRUD layer)
+- [x] Milestone 0 — Scaffold & run
+- [x] Milestone 1 — Prisma models
+- [x] Milestone 2 — Query helpers (CRUD layer)
 - [ ] Milestone 3 — Routes & actions (mutation boundary)
 - [ ] Milestone 4 — UI
 - [ ] Milestone 5 — Tests, lint, build
@@ -179,9 +179,9 @@ This is the classic "repository" pattern.
 
 **Done when:**
 
-- [ ] All five CRUD helpers exist for expenses
-- [ ] Category helpers exist
-- [ ] At least one query-helper test passes (`pnpm test`)
+- [x] All five CRUD helpers exist for expenses
+- [x] Category helpers exist
+- [x] At least one query-helper test passes (`pnpm test`)
 
 **Concepts learned:** Separation of concerns, the CRUD acronym, pagination and filtering.
 
