@@ -90,6 +90,8 @@ jobs:
 
       - run: pnpm db:generate
 
+      - run: pnpm db:migrate:deploy
+
       - run: pnpm test
 
   build:

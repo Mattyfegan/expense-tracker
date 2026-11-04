@@ -38,7 +38,7 @@ Each layer does one job:
 - [x] Milestone 0 — Scaffold & run
 - [x] Milestone 1 — Prisma models
 - [x] Milestone 2 — Query helpers (CRUD layer)
-- [ ] Milestone 3 — Routes & actions (mutation boundary)
+- [x] Milestone 3 — Routes & actions (mutation boundary)
 - [ ] Milestone 4 — UI
 - [ ] Milestone 5 — Tests, lint, build
 
@@ -212,9 +212,9 @@ This is the classic "repository" pattern.
 
 **Done when:**
 
-- [ ] `/expenses` and `/categories` render data
-- [ ] Create, edit, and delete work in the browser
-- [ ] Invalid input is rejected with a clear message
+- [x] `/expenses` and `/categories` render data
+- [x] Create, edit, and delete work in the browser
+- [x] Invalid input is rejected with a clear message
 
 **Concepts learned:** Validation, error handling, and the full CRUD round trip
 (Create / Read / Update / Delete) end-to-end.
