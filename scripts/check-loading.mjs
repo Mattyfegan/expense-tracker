@@ -6,10 +6,14 @@
  * Exit code 0 = all pages covered.
  * Exit code 1 = gaps found (prints paths).
  */
-import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join, relative } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const APP_DIR = new URL("../apps/web/src/app", import.meta.url).pathname;
+const APP_DIR = join(
+	dirname(fileURLToPath(import.meta.url)),
+	"../apps/web/src/app",
+);
 const SKIP_DIRS = new Set(["node_modules", ".next", "api"]);
 
 let failed = false;

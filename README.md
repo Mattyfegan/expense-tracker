@@ -1,12 +1,12 @@
 # Expense Tracker
 
-A simple expense tracker built to learn full-stack CRUD. Track your expenses, group them into categories, and see your spending at a glance.
+A simple expense tracker built to track your expenses, group them into categories, and see your spending at a glance.
 
 > A small portfolio project — not intended for production use.
 
 ## Built With
 
-This project was built using [OpenCode](https://opencode.ai), an AI coding harness, with **DeepSeek V4 Pro** as the model. It was scaffolded on [Quark](https://usequark.dev/).
+This project was built using the [OpenCode](https://opencode.ai) harness with **DeepSeek V4 Pro** as the model. It was scaffolded on Techstream's [Quark](https://usequark.dev/) framework.
 
 ## Tech Stack
 
@@ -20,7 +20,7 @@ This project was built using [OpenCode](https://opencode.ai), an AI coding harne
 ## Features
 
 - Create, read, update, and delete expenses
-- Organize expenses into categories
+- Organise expenses into categories
 - Spending summary dashboard
 
 ## Milestones
