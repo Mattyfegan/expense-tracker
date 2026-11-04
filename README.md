@@ -34,8 +34,8 @@ This project was built using the [OpenCode](https://opencode.ai) harness with **
 - [x] **Milestone 2 — Query helpers (CRUD layer)**
   Reusable create/read/update/delete functions with filtering and pagination. *Done when:* all five helpers exist for both models and a test passes.
 
-- [ ] **Milestone 3 — Routes & actions**
-  Wire the helpers to the web via Server Components and Zod-validated Server Actions. *Done when:* create/edit/delete work in the browser and bad input is rejected.
+- [x] **Milestone 3 — Routes & actions**
+  Wire the helpers to the web via Server Components and Zod-validated Server Actions. *Done when:* create/edit/delete work in the browser and bad input is rejected. Consider and test edge cases.
 
 - [ ] **Milestone 4 — UI**
   Build the pages and forms with the shared UI kit. *Done when:* every CRUD action is reachable with proper loading/empty/error states.

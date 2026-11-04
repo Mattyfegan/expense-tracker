@@ -3,9 +3,15 @@ import { dirname, resolve } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
-process.loadEnvFile(
-	resolve(dirname(fileURLToPath(import.meta.url)), "../../../.env"),
-);
+// .env is gitignored and absent in CI — the workflow provides POSTGRES_* env
+// vars directly. Load it only when it exists.
+try {
+	process.loadEnvFile(
+		resolve(dirname(fileURLToPath(import.meta.url)), "../../../.env"),
+	);
+} catch {
+	// no .env (CI) — rely on process.env provided by the runner.
+}
 
 const { category, expense } = await import("./queries.js");
 

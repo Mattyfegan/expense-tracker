@@ -476,4 +476,29 @@ export const expense = {
 	count: (options = {}) => {
 		return prisma.expense.count({ where: buildExpenseWhere(options) });
 	},
+
+	/**
+	 * Month-to-date summary: total spend plus a per-category breakdown.
+	 * Used by the dashboard page.
+	 */
+	summary: async () => {
+		const now = new Date();
+		const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+		const [total, byCategory] = await Promise.all([
+			prisma.expense.aggregate({
+				where: { date: { gte: monthStart } },
+				_sum: { amount: true },
+			}),
+			prisma.expense.groupBy({
+				by: ["categoryId"],
+				where: { date: { gte: monthStart } },
+				_sum: { amount: true },
+			}),
+		]);
+		return {
+			monthStart,
+			total: total._sum.amount ?? 0,
+			byCategory,
+		};
+	},
 };

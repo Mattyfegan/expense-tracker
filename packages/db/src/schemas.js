@@ -38,3 +38,53 @@ export const fileUploadSchema = z.object({
 	mimeType: z.string().min(1, "MIME type is required"),
 	size: z.number().int().positive("File size must be positive"),
 });
+
+export const categorySchema = z.object({
+	name: z
+		.string()
+		.trim()
+		.min(1, "Name is required")
+		.max(50, "Name must be 50 characters or fewer"),
+});
+
+function isFutureDate(value) {
+	const now = new Date();
+	const entered = Date.UTC(
+		value.getUTCFullYear(),
+		value.getUTCMonth(),
+		value.getUTCDate(),
+	);
+	const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+	return entered > today;
+}
+
+export const expenseSchema = z.object({
+	description: z
+		.string()
+		.trim()
+		.min(1, "Description is required")
+		.max(255, "Description must be 255 characters or fewer"),
+	amount: z
+		.string()
+		.trim()
+		.regex(
+			/^\d+(\.\d{1,2})?$/,
+			"Amount must be a number with at most 2 decimal places",
+		)
+		.refine((value) => Number(value) > 0, "Amount must be a positive number")
+		.refine(
+			(value) => Number(value) <= 99999999.99,
+			"Amount is too large (max 99,999,999.99)",
+		),
+	date: z.coerce
+		.date({ error: "Date is required" })
+		.refine((value) => !isFutureDate(value), {
+			message: "Date cannot be in the future",
+		}),
+	note: z
+		.string()
+		.trim()
+		.max(1000, "Note must be 1000 characters or fewer")
+		.optional(),
+	categoryId: z.string().min(1, "Category is required"),
+});
