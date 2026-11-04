@@ -1,8 +1,8 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { Prisma, prisma, user as userQueries } from "@expense-tracker/db";
 import { createAuthConfig, verifyPassword } from "@usequark/quark-core/auth";
 import { createLogger } from "@usequark/quark-core/core";
 import { AppError } from "@usequark/quark-core/errors";
-import { Prisma, prisma, user as userQueries } from "@expense-tracker/db";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";

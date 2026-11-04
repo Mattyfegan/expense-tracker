@@ -4,6 +4,7 @@
  * DELETE /api/files/[id] - Delete a file (owner or admin only)
  */
 
+import { file } from "@expense-tracker/db";
 import {
 	ConflictError,
 	createLogger,
@@ -12,7 +13,6 @@ import {
 	withCsrfProtection,
 } from "@usequark/quark-core/core";
 import { createStorage } from "@usequark/quark-core/storage";
-import { file } from "@expense-tracker/db";
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth-middleware";
 import { handleError } from "../../error-handler";

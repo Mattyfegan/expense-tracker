@@ -2,8 +2,8 @@ import {
 	getGoogleClientId,
 	isAudienceValid,
 } from "@expense-tracker/config/oauth";
-import { validateBody } from "@usequark/quark-core/core";
 import { user } from "@expense-tracker/db";
+import { validateBody } from "@usequark/quark-core/core";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isEmailVerificationRequired } from "../../../../lib/auth-email-verification";

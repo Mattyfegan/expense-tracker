@@ -1,9 +1,9 @@
+import { user, userUpdateSchema } from "@expense-tracker/db";
 import {
 	ConflictError,
 	validateBody,
 	withCsrfProtection,
 } from "@usequark/quark-core/core";
-import { user, userUpdateSchema } from "@expense-tracker/db";
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth-middleware";
 import { handleError } from "../../error-handler";

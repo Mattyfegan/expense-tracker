@@ -1,7 +1,7 @@
 import { getAppUrl } from "@expense-tracker/config";
+import { user, verificationToken } from "@expense-tracker/db";
 import { hashToken } from "@usequark/quark-core/auth";
 import { createLogger } from "@usequark/quark-core/core";
-import { user, verificationToken } from "@expense-tracker/db";
 import { NextResponse } from "next/server";
 
 const logger = createLogger("auth:verify-email");

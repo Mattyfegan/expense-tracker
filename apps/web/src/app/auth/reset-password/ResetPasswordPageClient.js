@@ -1,6 +1,5 @@
 "use client";
 
-import { clearCsrfToken, getCsrfToken } from "@usequark/quark-core/csrf-client";
 import {
 	Button,
 	ErrorBanner,
@@ -8,6 +7,7 @@ import {
 	PasswordInput,
 	QuarkLogo,
 } from "@expense-tracker/ui";
+import { clearCsrfToken, getCsrfToken } from "@usequark/quark-core/csrf-client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";

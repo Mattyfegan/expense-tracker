@@ -1,10 +1,10 @@
+import { user, userRegisterSchema } from "@expense-tracker/db";
 import { hashPassword } from "@usequark/quark-core/auth";
 import {
 	createLogger,
 	validateBody,
 	withCsrfProtection,
 } from "@usequark/quark-core/core";
-import { user, userRegisterSchema } from "@expense-tracker/db";
 import { NextResponse } from "next/server";
 import { isSignupEnabled } from "@/lib/auth-signup";
 import { enqueueWelcomeEmail } from "@/lib/enqueue-welcome-email";

@@ -1,9 +1,9 @@
+import { user } from "@expense-tracker/db";
 import {
 	createLogger,
 	validateBody,
 	withCsrfProtection,
 } from "@usequark/quark-core/core";
-import { user } from "@expense-tracker/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { sendResetPasswordEmail } from "@/lib/send-reset-password-email";

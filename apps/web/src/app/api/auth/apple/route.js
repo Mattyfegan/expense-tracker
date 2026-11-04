@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { getAppleClientIds } from "@expense-tracker/config/oauth";
-import { validateBody } from "@usequark/quark-core/core";
 import { user } from "@expense-tracker/db";
+import { validateBody } from "@usequark/quark-core/core";
 import { importJWK, jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 import { z } from "zod";

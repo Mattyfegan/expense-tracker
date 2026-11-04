@@ -4,6 +4,7 @@
  * GET  /api/files - List current user's files
  */
 
+import { file } from "@expense-tracker/db";
 import {
 	parsePaginationQuery,
 	validateFile,
@@ -14,7 +15,6 @@ import {
 	createStorage,
 	generateStorageKey,
 } from "@usequark/quark-core/storage";
-import { file } from "@expense-tracker/db";
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth-middleware";
 import { handleError } from "../error-handler";

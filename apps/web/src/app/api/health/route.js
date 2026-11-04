@@ -17,10 +17,10 @@
  * what the core module replaces.
  */
 
+import { pingDatabase } from "@expense-tracker/db";
 import { createLogger } from "@usequark/quark-core/core";
 import { checkStorage, runHealthChecks } from "@usequark/quark-core/health";
 import { pingRedis } from "@usequark/quark-core/redis";
-import { pingDatabase } from "@expense-tracker/db";
 import { NextResponse } from "next/server";
 
 const logger = createLogger("health");

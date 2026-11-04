@@ -1,5 +1,5 @@
-import { generateToken, hashToken } from "@usequark/quark-core/auth";
 import { verificationToken } from "@expense-tracker/db";
+import { generateToken, hashToken } from "@usequark/quark-core/auth";
 
 /**
  * Lifetime of a password-reset link.

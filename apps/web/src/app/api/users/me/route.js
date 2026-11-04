@@ -1,5 +1,5 @@
-import { validateBody, withCsrfProtection } from "@usequark/quark-core/core";
 import { user, userUpdateSchema } from "@expense-tracker/db";
+import { validateBody, withCsrfProtection } from "@usequark/quark-core/core";
 import { NextResponse } from "next/server";
 import { extractBearerPayload } from "../../../../lib/jwt";
 import { handleError } from "../../error-handler";
