@@ -34,7 +34,7 @@
 	},
 	"devDependencies": {
 		"@tailwindcss/postcss": "^4.3.3",
-		"@types/node": "^26.6.2",
+		"@types/node": "^26.6.6",
 		"tailwindcss": "^4.3.3",
 		"@expense-tracker/config": "workspace:*"
 	}
