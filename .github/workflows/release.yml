@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "Tag as pre-release (staging-only, skips production deploy)"
+        required: false
+        default: false
+        type: boolean
+
+concurrency: ${{ github.workflow }}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Tag & Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push to production branch
+        if: ${{ !inputs.prerelease }}
+        run: |
+          git fetch origin
+          if git ls-remote --exit-code --heads origin production > /dev/null; then
+            git checkout production && git merge --ff-only origin/main
+          else
+            git checkout -b production origin/main
+          fi
+          git push origin production
+          git checkout main
+
+      - name: Generate tag
+        id: tag
+        run: |
+          BASE="v$(date +%Y.%m.%d)"
+          SUFFIX="${{ inputs.prerelease && '-rc' || '' }}"
+          # Count only exact-format matches to avoid rc tags polluting production counts
+          EXISTING=$(git tag -l | grep -cE "^${BASE}${SUFFIX}(\.[0-9]+)?$" || true)
+          if [ "$EXISTING" -eq "0" ]; then
+            echo "tag=${BASE}${SUFFIX}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${BASE}${SUFFIX}.${EXISTING}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tag release
+        run: |
+          git tag -a "${{ steps.tag.outputs.tag }}" -m "Release ${{ steps.tag.outputs.tag }}"
+          git push origin "${{ steps.tag.outputs.tag }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          generate_release_notes: true
+          prerelease: ${{ inputs.prerelease }}

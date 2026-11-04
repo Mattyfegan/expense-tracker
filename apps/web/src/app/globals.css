@@ -1,0 +1,1166 @@
+@import "tailwindcss";
+@source "../../../../packages/ui/src/**/*.{js,jsx}";
+
+/* Tailwind dark variant - activates when data-theme="dark" is set on <html> */
+@custom-variant dark (&:is([data-theme="dark"] *));
+
+/*
+ * ─── DESIGN TOKEN ARCHITECTURE ───────────────────────────────────────────────
+ *
+ * This file defines two layers:
+ *
+ * 1. NEUTRAL LAYER (:root base)
+ *    - Structural tokens that every component needs (spacing, sizing, radii)
+ *    - Minimal color defaults that work in any context
+ *    - Override these to retheme without touching component source
+ *
+ * 2. OPINIONATED LAYER (Quark defaults)
+ *    - The specific blue/gray palette that ships with Quark
+ *    - Delete this block to start with a blank canvas
+ *    - Or replace with your own brand tokens
+ *
+ * Components consume CSS variables, never hardcoded values.
+ * To fully retheme: override tokens in the neutral layer.
+ */
+:root {
+	/*
+	 * ─── NEUTRAL TOKENS ────────────────────────────────────────────────────────
+	 *
+	 * Structural tokens that every component needs. These are theme-independent
+	 * and provide the baseline for any design system.
+	 */
+
+	/* Shape */
+	--radius-default: 0px;
+
+	/* Badge */
+	--badge-min-width: auto;
+	--badge-padding-x: 0.625rem;
+	--badge-padding-y: 0.125rem;
+	--badge-font-size: 0.75rem;
+
+	/* Button */
+	--btn-sm-height: 2rem;
+	--btn-sm-padding-x: 0.75rem;
+	--btn-sm-font-size: 0.875rem;
+	--btn-md-height: 2.5rem;
+	--btn-md-padding-x: 1rem;
+	--btn-md-font-size: 0.875rem;
+	--btn-lg-height: 2.75rem;
+	--btn-lg-padding-x: 1.5rem;
+	--btn-lg-font-size: 1rem;
+	--btn-icon-sm: 1rem;
+	--btn-icon-md: 1rem;
+	--btn-icon-lg: 1.25rem;
+
+	/* Input */
+	--input-height: 2.5rem;
+	--input-padding-x: 0.75rem;
+	--input-font-size: 0.875rem;
+
+	/* Textarea */
+	--textarea-padding-x: 0.75rem;
+	--textarea-padding-y: 0.5rem;
+	--textarea-font-size: 0.875rem;
+
+	/* Select */
+	--select-height: 2.5rem;
+	--select-padding-x: 0.75rem;
+	--select-font-size: 0.875rem;
+	--select-option-padding-x: 0.625rem;
+	--select-option-padding-y: 0.5rem;
+	--select-option-font-size: 0.875rem;
+	--select-empty-padding-x: 0.625rem;
+	--select-empty-padding-y: 0.5rem;
+	--select-empty-font-size: 0.875rem;
+
+	/* Dialog */
+	--dialog-padding-x: 1.25rem;
+	--dialog-padding-y: 1rem;
+
+	/* Card */
+	--card-header-padding: 1.5rem;
+	--card-header-gap: 0.375rem;
+	--card-content-padding: 1.5rem;
+	--card-content-padding-top: 0;
+	--card-footer-padding: 1.5rem;
+	--card-footer-padding-top: 0;
+
+	/* Form Field */
+	--form-field-gap: 0.375rem;
+
+	/* Table */
+	--table-head-height: 2.75rem;
+	--table-head-padding-x: 0.75rem;
+	--table-cell-padding: 0.75rem;
+
+	/* Navbar */
+	--navbar-desktop-height: 4.5rem;
+	--navbar-container-padding-x: 1rem;
+	--navbar-mobile-height: 3.5rem;
+	--navbar-mark-height: 2rem;
+	--navbar-mark-width: 2rem;
+	--navbar-mark-font-size: 11px;
+	--navbar-link-padding-x: 0.875rem;
+	--navbar-link-height: 2.5rem;
+	--navbar-link-font-size: 1rem;
+	--navbar-action-height: 2.75rem;
+	--navbar-action-padding-x: 1.25rem;
+	--navbar-action-font-size: 1rem;
+	--navbar-dropdown-width: 12rem;
+	--navbar-dropdown-item-padding-x: 0.875rem;
+	--navbar-dropdown-item-padding-y: 0.625rem;
+	--navbar-dropdown-item-font-size: 1rem;
+	--navbar-mobile-toggle-height: 2.5rem;
+	--navbar-mobile-toggle-width: 2.5rem;
+	--navbar-mobile-link-min-height: 3rem;
+	--navbar-mobile-link-padding-x: 1rem;
+	--navbar-mobile-link-font-size: 1rem;
+	--navbar-mobile-sublink-padding-x: 1.5rem;
+	--navbar-mobile-sublink-padding-y: 0.5rem;
+	--navbar-mobile-sublink-font-size: 0.875rem;
+	--navbar-mobile-action-padding-x: 1rem;
+	--navbar-mobile-action-height: 2.5rem;
+	--navbar-mobile-action-font-size: 0.875rem;
+
+	/* Footer */
+	--footer-container-max-width: 80rem;
+	--footer-container-padding-x: 1rem;
+	--footer-container-padding-y: 2rem;
+	--footer-mark-height: 2.75rem;
+	--footer-mark-width: 2.75rem;
+	--footer-cta-padding-x: 1.5rem;
+	--footer-cta-padding-y: 0.625rem;
+	--footer-cta-font-size: 0.875rem;
+	--footer-column-title-font-size: 0.75rem;
+	--footer-column-gap: 0.625rem;
+	--footer-bottom-gap: 0.75rem;
+
+	/* Lightbox */
+	--lightbox-padding-x: 0.75rem;
+	--lightbox-padding-y: 1rem;
+	--lightbox-dialog-padding: 0.75rem;
+	--lightbox-btn-padding-x: 0.75rem;
+	--lightbox-btn-padding-y: 0.375rem;
+	--lightbox-btn-font-size: 0.875rem;
+	--lightbox-close-padding-x: 0.5rem;
+	--lightbox-close-padding-y: 0.25rem;
+	--lightbox-close-font-size: 0.875rem;
+	--lightbox-counter-min-width: 4rem;
+	--lightbox-counter-font-size: 0.75rem;
+	--lightbox-nav-gap: 0.5rem;
+
+	/* RichText */
+	--richtext-padding-x: 0.75rem;
+	--richtext-padding-y: 0.5rem;
+	--richtext-toolbar-padding-x: 0.5rem;
+	--richtext-toolbar-padding-y: 0.375rem;
+	--richtext-toolbar-gap: 0.125rem;
+	--richtext-btn-size: 1.75rem;
+	--richtext-separator-height: 1.25rem;
+	--richtext-separator-width: 1px;
+	--richtext-separator-margin-x: 0.25rem;
+
+	/* Error Banner */
+	--error-banner-margin-bottom: 1rem;
+	--error-banner-padding-x: 0.75rem;
+	--error-banner-padding-y: 0.5rem;
+	--error-banner-font-size: 0.875rem;
+
+	/* Toast */
+	--toast-bottom: 1rem;
+	--toast-right: 1rem;
+	--toast-padding-x: 1rem;
+	--toast-padding-y: 0.75rem;
+	--toast-font-size: 0.875rem;
+	--toast-icon-size: 1.5rem;
+	--toast-dismiss-size: 1.5rem;
+
+	/* Skeleton */
+	--skeleton-radius: 0.5rem;
+
+	/* Spinner */
+	--spinner-size: 1rem;
+
+	/* Theme Toggle */
+	--toggle-height: 28px;
+	--toggle-padding-x: 10px;
+	--toggle-padding-x-right: 12px;
+	--toggle-radius: 14px;
+	--toggle-gap: 6px;
+	--toggle-font-size: 12px;
+
+	/*
+	 * ─── OPINIONATED TOKENS (Quark Defaults) ───────────────────────────────────
+	 *
+	 * Delete or replace this entire block to start with a blank canvas.
+	 * These values define the specific Quark blue/gray aesthetic.
+	 */
+
+	/* Primary brand colour */
+	--color-primary: #377dff;
+	--color-primary-hover: #5594ff;
+	--color-primary-muted: rgba(55, 125, 255, 0.1);
+
+	/* Surfaces */
+	--color-bg: #09101a;
+	--color-surface: #101827;
+	--color-surface-hover: #1c2642;
+
+	/* Borders */
+	--color-border: #263044;
+	--color-border-hover: rgba(55, 125, 255, 0.4);
+
+	/* Text */
+	--color-text: #e8eaf0;
+	--color-text-muted: #8d9ec0;
+	--color-text-faint: #7886a8;
+
+	/* Semantic: danger */
+	--color-danger: #ff4757;
+	--color-danger-hover: #ff6b78;
+	--color-danger-muted: rgba(255, 71, 87, 0.1);
+
+	/* Semantic: success */
+	--color-success: #34d399;
+	--color-success-muted: rgba(52, 211, 153, 0.1);
+
+	/* Semantic: warning */
+	--color-warning: #fbbf24;
+	--color-warning-muted: rgba(251, 191, 36, 0.1);
+
+	/* Semantic: info */
+	--color-info: #22d3ee;
+	--color-info-muted: rgba(34, 211, 238, 0.1);
+
+	/*
+	 * ─── QUARK TYPOGRAPHIC OPINIONS ─────────────────────────────────────────────
+	 *
+	 * The specific typographic identity that was previously hardcoded in components.
+	 * Delete these to revert to neutral defaults from the structural layer.
+	 */
+	--label-text-transform: uppercase;
+	--label-text-tracking: 0.1em;
+	--badge-text-transform: uppercase;
+	--badge-text-tracking: 0.05em;
+	--table-head-text-transform: uppercase;
+	--table-head-text-tracking: 0.1em;
+	--table-head-font-family: monospace;
+	--table-head-font-size: 0.75rem;
+	--table-cell-font-family: monospace;
+	--table-cell-font-size: 0.875rem;
+	--navbar-mark-text-transform: uppercase;
+	--navbar-mark-text-tracking: 0.1em;
+	--footer-column-title-text-transform: uppercase;
+	--footer-column-title-text-tracking: 0.2em;
+	--footer-column-title-font-family: monospace;
+	--lightbox-counter-text-transform: uppercase;
+	--lightbox-counter-text-tracking: 0.16em;
+	--lightbox-counter-font-family: monospace;
+
+	/* App shell */
+	--quark-page-bg: var(--color-bg);
+	--quark-grid-line: rgba(255, 255, 255, 0.07);
+	--quark-home-muted: #4e5870;
+	--quark-home-sep: #2c3450;
+	--quark-home-link-idle: #7886a8;
+	--quark-home-link-hover: var(--color-primary);
+	--quark-health-text: #7886a8;
+	--quark-health-sep: #2c3450;
+	--quark-health-dot-idle: #2c3450;
+	/* Logo dark arc - visible on lifted dark bg */
+	--quark-logo-dark-arc: #4e5e7a;
+	/* Toast SVG stroke colours */
+	--quark-toast-track: rgba(255, 255, 255, 0.2);
+	--quark-toast-progress: rgba(255, 255, 255, 0.85);
+
+	/*
+	 * ─── COMPONENT CSS VARIABLES ──────────────────────────────────────────────
+	 *
+	 * Each component reads its visual properties from these CSS variables.
+	 * Override any variable to retheme without editing component source files.
+	 * Variables using var(--color-xxx) adapt automatically to the active theme.
+	 */
+
+	/* ── Button ─────────────────────────────────────────────────────────────── */
+	--btn-radius: var(--radius-default);
+	--btn-bg: var(--color-primary-hover);
+	--btn-border: var(--color-primary-hover);
+	--btn-text: #ffffff;
+	--btn-ring: color-mix(in srgb, var(--color-primary) 60%, transparent);
+	--btn-hover-brightness: 0.95;
+	--btn-hover-shadow:
+		0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--btn-hover-bg: transparent;
+	--btn-hover-text: inherit;
+	--btn-hover-opacity: 1;
+
+	/* ── Badge ──────────────────────────────────────────────────────────────── */
+	--badge-bg: var(--color-surface-hover);
+	--badge-border: var(--color-border);
+	--badge-text: var(--color-text-muted);
+
+	/* ── Toast ──────────────────────────────────────────────────────────────── */
+	--toast-bg: var(--color-primary-muted);
+	--toast-border: color-mix(in srgb, var(--color-primary) 40%, transparent);
+	--toast-text: var(--color-primary);
+	--toast-shadow:
+		0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+	/* ── Card ───────────────────────────────────────────────────────────────── */
+	--card-bg: var(--color-surface);
+	--card-border: var(--color-border);
+	--card-title-text: var(--color-text);
+	--card-text-muted: var(--color-text-muted);
+	--card-trigger-hover-bg: var(--color-surface-hover);
+	--card-trigger-ring: color-mix(
+		in srgb,
+		var(--color-primary) 40%,
+		transparent
+	);
+
+	/* ── Dialog ─────────────────────────────────────────────────────────────── */
+	--dialog-bg: var(--color-surface);
+	--dialog-border: var(--color-border);
+	--dialog-title-text: var(--color-text);
+	--dialog-text-muted: var(--color-text-muted);
+	--dialog-close-hover-bg: var(--color-surface-hover);
+	--dialog-close-ring: var(--color-border-hover);
+	--dialog-backdrop: rgba(0, 0, 0, 0.6);
+
+	/* ── Table ──────────────────────────────────────────────────────────────── */
+	--table-bg: var(--color-surface);
+	--table-border: var(--color-border);
+	--table-header-bg: var(--color-surface-hover);
+	--table-row-hover-bg: color-mix(
+		in srgb,
+		var(--color-surface-hover) 60%,
+		transparent
+	);
+	--table-row-active-bg: color-mix(
+		in srgb,
+		var(--color-surface-hover) 40%,
+		transparent
+	);
+	--table-head-text: var(--color-text-faint);
+	--table-cell-text: var(--color-text);
+	--table-sort-icon: var(--color-text-faint);
+	--table-sort-icon-hover: var(--color-text);
+	--table-sort-active: var(--color-primary);
+	--table-ring: color-mix(in srgb, var(--color-primary) 40%, transparent);
+
+	/* ── Input / Textarea ───────────────────────────────────────────────────── */
+	--input-bg: var(--color-surface-hover);
+	--input-border: var(--color-border);
+	--input-text: var(--color-text);
+	--input-placeholder: var(--color-text-faint);
+	--input-border-hover: var(--color-border-hover);
+	--input-border-focus: var(--color-primary);
+	--input-ring-focus: color-mix(in srgb, var(--color-primary) 20%, transparent);
+	--input-disabled-opacity: 0.3;
+
+	/* ── Select ─────────────────────────────────────────────────────────────── */
+	--select-bg: var(--color-surface-hover);
+	--select-border: var(--color-border);
+	--select-text: var(--color-text);
+	--select-text-faint: var(--color-text-faint);
+	--select-border-hover: var(--color-border-hover);
+	--select-ring: color-mix(in srgb, var(--color-primary) 40%, transparent);
+	--select-panel-bg: var(--color-surface);
+	--select-panel-border: var(--color-border);
+	--select-option-hover-bg: var(--color-surface-hover);
+	--select-option-hover-text: var(--color-text);
+	--select-option-active-bg: var(--color-primary-muted);
+	--select-option-active-text: var(--color-primary);
+
+	/* ── Checkbox ───────────────────────────────────────────────────────────── */
+	--checkbox-bg: #090d14;
+	--checkbox-border: #1e2535;
+	--checkbox-accent: #377dff;
+	--checkbox-ring: color-mix(in srgb, #377dff 40%, transparent);
+	--checkbox-disabled-opacity: 0.4;
+	--checkbox-label-text: #6b7a99;
+
+	/* ── Label ──────────────────────────────────────────────────────────────── */
+	--label-text: var(--color-text-muted);
+
+	/* ── Skeleton ───────────────────────────────────────────────────────────── */
+	--skeleton-bg: rgba(30, 37, 53, 0.7);
+
+	/* ── Container ──────────────────────────────────────────────────────────── */
+	--container-bg: var(--color-surface);
+	--container-border: var(--color-border);
+
+	/* ── Error Banner ───────────────────────────────────────────────────────── */
+	--error-bg: var(--color-danger-muted);
+	--error-border: color-mix(in srgb, var(--color-danger) 40%, transparent);
+	--error-text: var(--color-danger);
+
+	/* ── Password Input ─────────────────────────────────────────────────────── */
+	--input-icon: var(--color-text-muted);
+	--input-icon-hover: var(--color-text);
+
+	/* ── Lightbox ───────────────────────────────────────────────────────────── */
+	--lightbox-backdrop: rgba(0, 0, 0, 0.8);
+	--lightbox-btn-border: rgba(255, 255, 255, 0.25);
+	--lightbox-btn-text: #ffffff;
+	--lightbox-btn-hover-bg: rgba(255, 255, 255, 0.15);
+	--lightbox-btn-ring: rgba(255, 255, 255, 0.6);
+	--lightbox-caption-text: rgba(255, 255, 255, 0.85);
+	--lightbox-counter-text: rgba(255, 255, 255, 0.8);
+
+	/* ── RichText ───────────────────────────────────────────────────────────── */
+	--richtext-bg: var(--color-surface-hover);
+	--richtext-border: var(--color-border);
+	--richtext-text: var(--color-text);
+	--richtext-border-focus: var(--color-primary);
+	--richtext-ring: color-mix(in srgb, var(--color-primary) 20%, transparent);
+	--richtext-toolbar-bg: var(--color-surface);
+	--richtext-toolbar-border: var(--color-border);
+	--richtext-btn-text: var(--color-text-muted);
+	--richtext-btn-hover-bg: var(--color-surface-hover);
+	--richtext-btn-hover-text: var(--color-text);
+	--richtext-btn-active-bg: var(--color-surface-hover);
+	--richtext-btn-active-text: var(--color-text);
+	--richtext-separator: var(--color-border);
+	--richtext-placeholder: var(--color-text-faint);
+	--richtext-link: var(--color-primary);
+	--richtext-blockquote-border: var(--color-border);
+	--richtext-blockquote-text: var(--color-text-muted);
+	--richtext-code-bg: var(--color-surface-hover);
+
+	/* ── Navbar ─────────────────────────────────────────────────────────────── */
+	--navbar-bg: color-mix(in srgb, var(--color-surface) 95%, transparent);
+	--navbar-mobile-bg: var(--color-surface);
+	--navbar-border: var(--color-border);
+	--navbar-inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+	--navbar-text: var(--color-text);
+	--navbar-text-muted: var(--color-text-muted);
+	--navbar-hover-bg: var(--color-surface);
+	--navbar-hover-text: var(--color-text);
+	--navbar-logo-text: var(--color-text);
+	--navbar-logo-hover: var(--color-primary);
+	--navbar-mark-bg: var(--color-primary-muted);
+	--navbar-mark-border: color-mix(
+		in srgb,
+		var(--color-primary) 40%,
+		transparent
+	);
+	--navbar-mark-text: var(--color-primary);
+	--navbar-action-border: color-mix(
+		in srgb,
+		var(--color-primary) 55%,
+		transparent
+	);
+	--navbar-action-bg: var(--color-primary-muted);
+	--navbar-action-text: var(--color-primary);
+	--navbar-action-hover-border: var(--color-primary);
+	--navbar-action-hover-bg: color-mix(
+		in srgb,
+		var(--color-primary-muted) 70%,
+		transparent
+	);
+	--navbar-ring: color-mix(in srgb, var(--color-primary) 40%, transparent);
+	--navbar-dropdown-bg: var(--color-surface);
+	--navbar-dropdown-border: var(--color-border);
+	--navbar-dropdown-shadow:
+		0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+	--navbar-mobile-panel-bg: var(--color-surface);
+	--navbar-mobile-panel-border: var(--color-border);
+	--navbar-divide-border: var(--color-border);
+
+	/* ── Footer ─────────────────────────────────────────────────────────────── */
+	--footer-bg: var(--color-surface);
+	--footer-border: var(--color-border);
+	--footer-text: var(--color-text);
+	--footer-text-muted: var(--color-text-muted);
+	--footer-text-faint: var(--color-text-faint);
+	--footer-mark-bg: var(--color-primary-muted);
+	--footer-mark-text: var(--color-primary);
+	--footer-cta-border: var(--color-primary);
+	--footer-cta-text: var(--color-primary);
+	--footer-cta-hover-bg: var(--color-primary-muted);
+	--footer-link-hover: var(--color-text);
+	--footer-sep: color-mix(in srgb, var(--color-text-faint) 70%, transparent);
+
+	/* ── Logo ───────────────────────────────────────────────────────────────── */
+	--logo-blue-arc: #377dff;
+	--logo-red-arc: #ff4757;
+	--logo-red-dash: #ff4757;
+}
+
+@media (prefers-color-scheme: light) {
+	/* OS says light AND the user hasn't explicitly pinned dark via the toggle */
+	:root:not([data-theme="dark"]) {
+		--color-primary: #1d4ed8;
+		--color-primary-hover: #1a56db;
+		--color-primary-muted: rgba(29, 78, 216, 0.08);
+
+		--color-bg: #f7f8fa;
+		--color-surface: #ffffff;
+		--color-surface-hover: #f3f4f6;
+
+		--color-border: #e5e7eb;
+		--color-border-hover: #d1d5db;
+
+		--color-text: #111827;
+		--color-text-muted: #6b7280;
+		--color-text-faint: #9ca3af;
+
+		--color-danger: #dc2626;
+		--color-danger-hover: #b91c1c;
+		--color-danger-muted: rgba(220, 38, 38, 0.08);
+
+		--color-success: #059669;
+		--color-success-muted: rgba(5, 150, 105, 0.08);
+
+		--color-warning: #d97706;
+		--color-warning-muted: rgba(217, 119, 6, 0.08);
+
+		--color-info: #0891b2;
+		--color-info-muted: rgba(8, 145, 178, 0.08);
+
+		--quark-page-bg: var(--color-bg);
+		--quark-grid-line: rgba(0, 0, 0, 0.07);
+		--quark-home-muted: #9ca3af;
+		--quark-home-sep: #d1d5db;
+		--quark-home-link-idle: #6b7280;
+		--quark-health-text: #9ca3af;
+		--quark-health-sep: #d1d5db;
+		--quark-health-dot-idle: #d1d5db;
+		--quark-logo-dark-arc: #2d3436;
+
+		/* Component variable light overrides */
+		--checkbox-bg: transparent;
+		--checkbox-border: #d1d5db;
+		--checkbox-accent: #2563eb;
+		--checkbox-ring: color-mix(in srgb, #3b82f6 40%, transparent);
+		--checkbox-disabled-opacity: 0.6;
+		--checkbox-label-text: #374151;
+		--skeleton-bg: rgba(229, 231, 235, 0.8);
+		--navbar-inset-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.02);
+	}
+}
+
+/* User explicitly toggled to light (overrides OS dark preference) */
+:root[data-theme="light"] {
+	--color-primary: #1d4ed8;
+	--color-primary-hover: #1a56db;
+	--color-primary-muted: rgba(29, 78, 216, 0.08);
+
+	--color-bg: #f7f8fa;
+	--color-surface: #ffffff;
+	--color-surface-hover: #f3f4f6;
+
+	--color-border: #e5e7eb;
+	--color-border-hover: #d1d5db;
+
+	--color-text: #111827;
+	--color-text-muted: #6b7280;
+	--color-text-faint: #9ca3af;
+
+	--color-danger: #dc2626;
+	--color-danger-hover: #b91c1c;
+	--color-danger-muted: rgba(220, 38, 38, 0.08);
+
+	--color-success: #059669;
+	--color-success-muted: rgba(5, 150, 105, 0.08);
+
+	--color-warning: #d97706;
+	--color-warning-muted: rgba(217, 119, 6, 0.08);
+
+	--color-info: #0891b2;
+	--color-info-muted: rgba(8, 145, 178, 0.08);
+
+	--quark-page-bg: var(--color-bg);
+	--quark-grid-line: rgba(0, 0, 0, 0.07);
+	--quark-home-muted: #9ca3af;
+	--quark-home-sep: #d1d5db;
+	--quark-home-link-idle: #6b7280;
+	--quark-health-text: #9ca3af;
+	--quark-health-sep: #d1d5db;
+	--quark-health-dot-idle: #d1d5db;
+	--quark-logo-dark-arc: #2d3436;
+
+	/* Component variable light overrides */
+	--checkbox-bg: transparent;
+	--checkbox-border: #d1d5db;
+	--checkbox-accent: #2563eb;
+	--checkbox-ring: color-mix(in srgb, #3b82f6 40%, transparent);
+	--checkbox-disabled-opacity: 0.6;
+	--checkbox-label-text: #374151;
+	--skeleton-bg: rgba(229, 231, 235, 0.8);
+	--navbar-inset-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+/*
+ * ─── TAILWIND THEME BRIDGE ───────────────────────────────────────────────────
+ *
+ * Register CSS vars as first-class Tailwind v4 utilities.
+ * Components use bg-primary, text-text-muted, border-border, etc.
+ * No arbitrary [#hex] values needed inside component source files.
+ */
+@theme inline {
+	--color-primary: var(--color-primary);
+	--color-primary-hover: var(--color-primary-hover);
+	--color-primary-muted: var(--color-primary-muted);
+
+	--color-bg: var(--color-bg);
+	--color-surface: var(--color-surface);
+	--color-surface-hover: var(--color-surface-hover);
+
+	--color-border: var(--color-border);
+	--color-border-hover: var(--color-border-hover);
+
+	--color-text: var(--color-text);
+	--color-text-muted: var(--color-text-muted);
+	--color-text-faint: var(--color-text-faint);
+
+	--color-danger: var(--color-danger);
+	--color-danger-hover: var(--color-danger-hover);
+	--color-danger-muted: var(--color-danger-muted);
+
+	--color-success: var(--color-success);
+	--color-success-muted: var(--color-success-muted);
+
+	--color-warning: var(--color-warning);
+	--color-warning-muted: var(--color-warning-muted);
+
+	--color-info: var(--color-info);
+	--color-info-muted: var(--color-info-muted);
+
+	--radius-default: var(--radius-default);
+}
+
+/* Theme toggle pill - CSS-driven so the toggle reflects data-theme
+ * immediately from the blocking script, with no React-state flash. */
+:root,
+:root[data-theme="light"] {
+	--toggle-track-bg: #e5e7eb;
+	--toggle-track-border: #d1d5db;
+	--toggle-knob-bg: #9ca3af;
+	--toggle-knob-x: translateX(0);
+}
+:root[data-theme="dark"] {
+	--toggle-track-bg: #131d30;
+	--toggle-track-border: #253650;
+	--toggle-knob-bg: #377dff;
+	--toggle-knob-x: translateX(14px);
+}
+
+/* Toast SVG strokes - per-variant dark overrides.
+/*
+ * ─── BUTTON VARIANTS ─────────────────────────────────────────────────────────
+ * Each variant overrides the generic --btn-* variables.
+ */
+[data-btn-variant="default"] {
+	--btn-bg: var(--color-surface);
+	--btn-border: var(--color-border);
+	--btn-text: var(--color-text);
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-bg: var(--color-surface-hover);
+	--btn-hover-text: var(--color-text);
+	--btn-ring: var(--color-border-hover);
+}
+[data-btn-variant="primary"] {
+	--btn-bg: var(--color-primary-hover);
+	--btn-border: var(--color-primary-hover);
+	--btn-text: #ffffff;
+	--btn-hover-brightness: 0.95;
+	--btn-hover-shadow:
+		0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--btn-ring: color-mix(in srgb, var(--color-primary) 60%, transparent);
+}
+[data-btn-variant="secondary"] {
+	--btn-bg: var(--color-surface);
+	--btn-border: var(--color-border-hover);
+	--btn-text: var(--color-text);
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-bg: var(--color-surface-hover);
+	--btn-ring: var(--color-border-hover);
+}
+[data-btn-variant="danger"] {
+	--btn-bg: var(--color-danger-hover);
+	--btn-border: var(--color-danger-hover);
+	--btn-text: #ffffff;
+	--btn-hover-brightness: 0.95;
+	--btn-hover-shadow:
+		0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--btn-ring: color-mix(in srgb, var(--color-danger) 60%, transparent);
+}
+[data-btn-variant="ghost"] {
+	--btn-bg: transparent;
+	--btn-border: transparent;
+	--btn-text: var(--color-text-faint);
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-bg: var(--color-surface-hover);
+	--btn-hover-text: var(--color-text);
+	--btn-ring: var(--color-border-hover);
+}
+[data-btn-variant="success"] {
+	--btn-bg: var(--color-success-muted);
+	--btn-border: var(--color-success);
+	--btn-text: var(--color-success);
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-bg: color-mix(
+		in srgb,
+		var(--color-success-muted) 80%,
+		transparent
+	);
+	--btn-ring: color-mix(in srgb, var(--color-success) 60%, transparent);
+}
+[data-btn-variant="warning"] {
+	--btn-bg: var(--color-warning-muted);
+	--btn-border: var(--color-warning);
+	--btn-text: var(--color-warning);
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-bg: color-mix(
+		in srgb,
+		var(--color-warning-muted) 80%,
+		transparent
+	);
+	--btn-ring: color-mix(in srgb, var(--color-warning) 60%, transparent);
+}
+[data-btn-variant="info"] {
+	--btn-bg: var(--color-info-muted);
+	--btn-border: var(--color-info);
+	--btn-text: var(--color-info);
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-bg: color-mix(in srgb, var(--color-info-muted) 80%, transparent);
+	--btn-ring: color-mix(in srgb, var(--color-info) 60%, transparent);
+}
+[data-btn-variant="outline"] {
+	--btn-bg: transparent;
+	--btn-border: var(--color-primary);
+	--btn-text: var(--color-primary);
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-bg: var(--color-primary-muted);
+	--btn-ring: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+[data-btn-variant="solid"] {
+	--btn-bg: var(--color-primary);
+	--btn-border: var(--color-primary);
+	--btn-text: #ffffff;
+	--btn-hover-brightness: 1;
+	--btn-hover-shadow: none;
+	--btn-hover-opacity: 0.9;
+	--btn-ring: color-mix(in srgb, var(--color-primary) 60%, transparent);
+}
+
+/*
+ * ─── BADGE VARIANTS ──────────────────────────────────────────────────────────
+ */
+[data-badge-variant="default"] {
+	--badge-bg: var(--color-surface-hover);
+	--badge-border: var(--color-border);
+	--badge-text: var(--color-text-muted);
+}
+[data-badge-variant="primary"] {
+	--badge-bg: var(--color-primary-muted);
+	--badge-border: color-mix(in srgb, var(--color-primary) 40%, transparent);
+	--badge-text: var(--color-primary);
+}
+[data-badge-variant="success"] {
+	--badge-bg: var(--color-success-muted);
+	--badge-border: color-mix(in srgb, var(--color-success) 40%, transparent);
+	--badge-text: var(--color-success);
+}
+[data-badge-variant="warning"] {
+	--badge-bg: var(--color-warning-muted);
+	--badge-border: color-mix(in srgb, var(--color-warning) 40%, transparent);
+	--badge-text: var(--color-warning);
+}
+[data-badge-variant="danger"] {
+	--badge-bg: var(--color-danger-muted);
+	--badge-border: color-mix(in srgb, var(--color-danger) 40%, transparent);
+	--badge-text: var(--color-danger);
+}
+[data-badge-variant="info"] {
+	--badge-bg: var(--color-info-muted);
+	--badge-border: color-mix(in srgb, var(--color-info) 40%, transparent);
+	--badge-text: var(--color-info);
+}
+
+/*
+ * ─── TOAST VARIANTS ──────────────────────────────────────────────────────────
+ */
+[data-toast-variant="default"] {
+	--toast-bg: var(--color-primary-muted);
+	--toast-border: color-mix(in srgb, var(--color-primary) 40%, transparent);
+	--toast-text: var(--color-primary);
+	--toast-shadow:
+		0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+[data-toast-variant="success"] {
+	--toast-bg: var(--color-success-muted);
+	--toast-border: color-mix(in srgb, var(--color-success) 40%, transparent);
+	--toast-text: var(--color-success);
+	--toast-shadow:
+		0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+[data-toast-variant="error"] {
+	--toast-bg: var(--color-danger-muted);
+	--toast-border: color-mix(in srgb, var(--color-danger) 40%, transparent);
+	--toast-text: var(--color-danger);
+	--toast-shadow:
+		0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Toast SVG strokes — per-variant dark overrides.
+ * Light uses :root defaults (white strokes on dark toast bg).
+ * The blocking script in layout.js ensures data-theme is always set. */
+[data-theme="dark"] [data-toast-variant="default"] {
+	--quark-toast-track: rgba(55, 125, 255, 0.12);
+	--quark-toast-progress: rgba(55, 125, 255, 0.7);
+}
+[data-theme="dark"] [data-toast-variant="success"] {
+	--quark-toast-track: rgba(52, 211, 153, 0.12);
+	--quark-toast-progress: rgba(52, 211, 153, 0.7);
+}
+[data-theme="dark"] [data-toast-variant="error"] {
+	--quark-toast-track: rgba(255, 71, 87, 0.12);
+	--quark-toast-progress: rgba(255, 71, 87, 0.7);
+}
+
+/* Pin the document background to match the app shell - prevents overscroll flash */
+html,
+body {
+	background-color: var(--quark-page-bg);
+}
+
+.quark-home-main,
+.quark-page-grid {
+	background-color: var(--quark-page-bg);
+	background-image:
+		linear-gradient(var(--quark-grid-line) 1px, transparent 1px),
+		linear-gradient(90deg, var(--quark-grid-line) 1px, transparent 1px);
+	background-size: 40px 40px;
+}
+
+/* Native dialog - browser default positions it at the top; force viewport-center */
+dialog {
+	position: fixed;
+	inset: 0;
+	margin: auto;
+}
+
+/* Home page - footer fades in after animation takes the stage */
+@keyframes quark-home-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.quark-home-footer {
+	animation: quark-home-fade-in 0.6s ease-out 1.2s both;
+}
+
+.quark-home-label {
+	color: var(--quark-home-muted);
+	font-size: 11px;
+	letter-spacing: 0.15em;
+}
+
+.quark-home-sep {
+	color: var(--quark-home-sep);
+	font-family: monospace;
+}
+
+.quark-home-link {
+	color: var(--quark-home-link-idle);
+	text-decoration: none;
+	font-family: monospace;
+	transition: color 0.15s ease;
+}
+
+.quark-home-link:hover {
+	color: var(--quark-home-link-hover);
+}
+
+.quark-home-link:focus-visible {
+	outline: 1px solid var(--quark-home-link-hover);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+.quark-home-external-icon {
+	display: inline-block;
+	width: 0.65em;
+	height: 0.65em;
+	margin-left: 3px;
+	vertical-align: 0.05em;
+	opacity: 0.6;
+	transition: opacity 0.15s ease;
+}
+
+.quark-home-link:hover .quark-home-external-icon {
+	opacity: 1;
+}
+
+/* Home page - ASCII panels grid */
+.quark-home-panels {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1rem;
+	max-width: 820px;
+	width: 100%;
+	padding: 0 1rem;
+	margin: 0 auto;
+}
+
+@media (max-width: 820px) {
+	.quark-home-panels {
+		grid-template-columns: 1fr;
+		max-width: 400px;
+	}
+}
+
+.quark-ascii-panel {
+	position: relative;
+}
+
+.quark-ascii-box {
+	margin: 0;
+	padding: 0;
+	font-family: monospace;
+	font-size: 11px;
+	line-height: 1.4;
+	color: var(--quark-home-link-idle);
+	white-space: pre;
+}
+
+.quark-ascii-char {
+	color: var(--quark-home-link-idle);
+}
+
+.quark-ascii-line {
+	display: block;
+}
+
+.quark-ascii-copy {
+	position: absolute;
+	bottom: 0.8rem;
+	right: 0.6rem;
+	background: none;
+	border: none;
+	color: #6b7a99;
+	cursor: pointer;
+	font-family: monospace;
+	font-size: 10px;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	padding: 0;
+	line-height: 1;
+	transition: color 0.15s ease;
+}
+
+.quark-ascii-copy:hover {
+	color: var(--color-primary);
+}
+
+.quark-ascii-copy--copied {
+	color: var(--color-success);
+	text-decoration: none;
+}
+
+/* Floating theme toggle - top-right corner, always visible */
+.floating-theme-toggle {
+	position: fixed;
+	top: 1.5rem;
+	right: 1.5rem;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: 50%;
+	cursor: pointer;
+	color: var(--color-text-muted);
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		transform 0.15s ease;
+	font-size: 1.25rem;
+	line-height: 1;
+	padding: 0;
+}
+
+.floating-theme-toggle:hover {
+	background-color: var(--color-surface-hover);
+	border-color: var(--color-border-hover);
+	color: var(--color-text);
+	transform: scale(1.08);
+}
+
+.floating-theme-toggle:active {
+	transform: scale(0.95);
+}
+
+.floating-theme-toggle:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+.floating-theme-toggle-icon {
+	display: block;
+	width: 1rem;
+	height: 1rem;
+	transition: transform 0.2s ease;
+}
+
+/* Subtle rotation on toggle */
+.floating-theme-toggle:active .floating-theme-toggle-icon {
+	transform: rotate(180deg);
+}
+
+@keyframes quark-dialog-in {
+	from {
+		opacity: 0;
+		transform: scale(0.95) translateY(-8px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes quark-dialog-out {
+	from {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.95) translateY(-8px);
+	}
+}
+
+/*
+ * ─── AUTH LAYOUT ─────────────────────────────────────────────────────────────
+ *
+ * Split-panel auth layout: authority branding panel (left) + form panel (right).
+ * On mobile the authority panel collapses - only the logo bar is shown.
+ */
+@keyframes quark-auth-enter {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.quark-auth-layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	min-height: 100dvh;
+}
+
+@media (min-width: 768px) {
+	.quark-auth-layout {
+		grid-template-columns: 2fr 3fr;
+	}
+}
+
+.quark-auth-panel {
+	animation: quark-auth-enter 300ms linear both;
+}
+
+.quark-auth-brand {
+	display: none;
+	background-color: var(--color-bg);
+	background-image:
+		linear-gradient(var(--quark-grid-line) 1px, transparent 1px),
+		linear-gradient(90deg, var(--quark-grid-line) 1px, transparent 1px);
+	background-size: 40px 40px;
+	border-right: 1px solid var(--color-border);
+}
+
+@media (min-width: 768px) {
+	.quark-auth-brand {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 3rem;
+	}
+}
+
+.quark-auth-form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 2rem 1.5rem;
+	background-color: var(--color-surface);
+}
+
+@media (min-width: 768px) {
+	.quark-auth-form {
+		padding: 3rem;
+	}
+}
+
+@keyframes quark-toast-in {
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes quark-toast-out {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+}
+
+@keyframes slide-in-from-right {
+	from {
+		opacity: 0;
+		transform: translateX(24px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slide-in-from-left {
+	from {
+		opacity: 0;
+		transform: translateX(-24px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.animate-slide-in {
+	animation: slide-in-from-right 300ms ease-out both;
+}
+
+.animate-slide-in-back {
+	animation: slide-in-from-left 300ms ease-out both;
+}

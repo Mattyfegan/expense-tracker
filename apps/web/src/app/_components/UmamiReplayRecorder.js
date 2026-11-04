@@ -1,0 +1,198 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { useEffect, useEffectEvent, useRef } from "react";
+import { isUmamiStaff } from "../../lib/analytics/umami.js";
+import { getUmamiClientConfig } from "../../lib/analytics/umami-config.js";
+import {
+	buildReplayEndpoint,
+	createReplayBuffer,
+	getReplayMaskConfig,
+	postReplayBatch,
+	shouldSampleReplay,
+	UMAMI_REPLAY_DEFAULTS,
+	waitForUmamiSessionCache,
+} from "../../lib/analytics/umami-replay.js";
+
+const RRWEB_OPTIONS = {
+	inlineStylesheet: true,
+	slimDOMOptions: {
+		script: true,
+		comment: true,
+		headMetaDescKeywords: true,
+		headMetaSocial: true,
+		headMetaRobots: true,
+		headMetaHttpEquiv: true,
+		headMetaAuthorship: true,
+		headMetaVerification: true,
+	},
+	recordCanvas: false,
+	recordCrossOriginIframes: false,
+	checkoutEveryNms: 30000,
+};
+
+export default function UmamiReplayRecorder() {
+	const pathname = usePathname();
+	const previousPathnameRef = useRef(pathname);
+	const bufferRef = useRef(createReplayBuffer());
+	const cacheRef = useRef("");
+	const endpointRef = useRef("");
+	const websiteIdRef = useRef("");
+	const startedAtRef = useRef(0);
+	const isActiveRef = useRef(false);
+	const recordRef = useRef(null);
+	const stopRecordingRef = useRef(null);
+
+	const flushPendingEvents = useEffectEvent(
+		async ({ useKeepalive = false } = {}) => {
+			const events = bufferRef.current.drain();
+			if (!events.length) return false;
+
+			const sent = await postReplayBatch({
+				endpoint: endpointRef.current,
+				cache: cacheRef.current,
+				websiteId: websiteIdRef.current,
+				events,
+				useKeepalive,
+			});
+
+			if (!sent) {
+				bufferRef.current.restore(events);
+			}
+
+			return sent;
+		},
+	);
+
+	useEffect(() => {
+		const umamiConfig = getUmamiClientConfig();
+		if (!umamiConfig.replayEnabled || !shouldSampleReplay()) {
+			return undefined;
+		}
+
+		// Skip replay on admin pages and for any staff user (umami_user_role
+		// cookie set by admin layout via inline client script).
+		if (window.location.pathname.startsWith("/admin")) return undefined;
+		if (isUmamiStaff()) return undefined;
+
+		let cancelled = false;
+		const abortController = new AbortController();
+		let flushIntervalId = null;
+		let stopRecording = () => {};
+		let removeVisibilityListener = () => {};
+		let removePageHideListener = () => {};
+
+		async function setupReplay() {
+			const cache = await waitForUmamiSessionCache({
+				signal: abortController.signal,
+			});
+			if (cancelled || !cache) return;
+
+			const { record } = await import("rrweb");
+			if (cancelled) return;
+
+			cacheRef.current = cache;
+			endpointRef.current = umamiConfig.proxyRecordUrl || buildReplayEndpoint();
+			websiteIdRef.current = umamiConfig.websiteId;
+			startedAtRef.current = Date.now();
+
+			const stopRrweb = record({
+				emit(event) {
+					if (
+						Date.now() - startedAtRef.current >
+						UMAMI_REPLAY_DEFAULTS.maxDurationMs
+					) {
+						stopRecording();
+						return;
+					}
+
+					const eventCount = bufferRef.current.push(event);
+					if (eventCount >= UMAMI_REPLAY_DEFAULTS.flushEventCount) {
+						void flushPendingEvents();
+					}
+				},
+				...getReplayMaskConfig(),
+				...RRWEB_OPTIONS,
+				...(UMAMI_REPLAY_DEFAULTS.blockSelector
+					? { blockSelector: UMAMI_REPLAY_DEFAULTS.blockSelector }
+					: {}),
+			});
+
+			recordRef.current = record;
+			isActiveRef.current = true;
+			flushIntervalId = window.setInterval(() => {
+				void flushPendingEvents();
+			}, UMAMI_REPLAY_DEFAULTS.flushIntervalMs);
+
+			const handleVisibilityChange = () => {
+				if (document.visibilityState === "hidden") {
+					void flushPendingEvents({ useKeepalive: true });
+				}
+			};
+			const handlePageHide = () => {
+				void flushPendingEvents({ useKeepalive: true });
+			};
+
+			document.addEventListener("visibilitychange", handleVisibilityChange);
+			window.addEventListener("pagehide", handlePageHide);
+
+			removeVisibilityListener = () => {
+				document.removeEventListener(
+					"visibilitychange",
+					handleVisibilityChange,
+				);
+			};
+			removePageHideListener = () => {
+				window.removeEventListener("pagehide", handlePageHide);
+			};
+
+			const stopFn = ({ useKeepalive = false } = {}) => {
+				if (!isActiveRef.current) return;
+
+				isActiveRef.current = false;
+				if (flushIntervalId) {
+					clearInterval(flushIntervalId);
+					flushIntervalId = null;
+				}
+
+				removeVisibilityListener();
+				removePageHideListener();
+				stopRrweb();
+				recordRef.current = null;
+				void flushPendingEvents({ useKeepalive });
+			};
+			stopRecordingRef.current = stopFn;
+			stopRecording = stopFn;
+		}
+
+		void setupReplay();
+
+		return () => {
+			cancelled = true;
+			abortController.abort();
+			stopRecording({ useKeepalive: true });
+		};
+	}, []);
+
+	useEffect(() => {
+		if (previousPathnameRef.current === pathname) return;
+
+		previousPathnameRef.current = pathname;
+
+		// Stop recording if navigating into an admin page or if a staff
+		// cookie appears mid-session (e.g. after visiting /admin).
+		if (pathname.startsWith("/admin") || isUmamiStaff()) {
+			if (isActiveRef.current) {
+				stopRecordingRef.current?.({ useKeepalive: true });
+			}
+			return;
+		}
+
+		if (!isActiveRef.current || !recordRef.current) return;
+
+		void flushPendingEvents();
+		recordRef.current.takeFullSnapshot?.(true);
+	}, [pathname]);
+
+	return null;
+}

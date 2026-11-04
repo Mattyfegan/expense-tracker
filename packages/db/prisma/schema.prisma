@@ -1,0 +1,182 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  admin
+  lead_dev
+  client_admin
+  editor
+  viewer
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  password      String?
+  image         String?
+  role          UserRole  @default(viewer)
+  // Bumped whenever the account's password changes. Session tokens (web JWTs
+  // and mobile refresh tokens) issued before this instant are rejected, so a
+  // stolen or pre-change session dies with the password it was born under.
+  passwordChangedAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+  files         File[]
+
+  // `email` is already @unique (User_email_key); a second plain index on the
+  // same column only adds write cost.
+  @@index([createdAt])
+}
+
+// NextAuth Models
+model Account {
+  id                 String   @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expires])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // `token` is already @unique (VerificationToken_token_key); a second plain
+  // index on the same column only adds write cost.
+  @@unique([identifier, token])
+  @@index([expires])
+}
+
+// Job Queue Model
+model Job {
+  id        String   @id @default(cuid())
+  queue     String
+  name      String
+  data      Json?
+  status    JobStatus @default(PENDING)
+  error     String?
+  attempts  Int       @default(0)
+  maxRetries Int      @default(3)
+  runAt     DateTime  @default(now())
+  startedAt DateTime?
+  completedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // (status, runAt) serves status-only and (status, runAt) queries
+  // through its leftmost prefix. It does not index runAt alone: a
+  // runAt-only range query cannot use it, so add a single-column
+  // [runAt] index if such a query appears. The shipped code has none
+  // (BullMQ schedules in Redis; this model is an audit trail), so the
+  // single-column [status] and [runAt] indexes were redundant for the
+  // query patterns in use and were removed.
+  @@index([queue])
+  @@index([status, runAt])
+  @@index([createdAt])
+}
+
+enum JobStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// File Upload Model
+model File {
+  id              String   @id @default(cuid())
+  filename        String
+  originalName    String
+  mimeType        String
+  size            Int
+  storageKey      String   @unique
+  storageProvider String   @default("local")
+  uploadedById    String?
+  uploadedBy      User?    @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([uploadedById])
+  @@index([mimeType])
+  @@index([createdAt])
+}
+
+// Audit Log Model
+//
+// `userId` is nullable and SetNull, not Cascade. An audit record that is deleted
+// along with the user it describes cannot serve as an audit trail — and deleting a
+// user destroys the rows recording what that user did, including the rows recording
+// the deletion itself.
+//
+// `actorEmail` snapshots the actor's address at write time. With SetNull alone the
+// row survives but stops naming who acted, so a trail that outlives its actor would
+// be unattributable. The snapshot keeps the record readable on its own terms.
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  actorEmail  String?
+  action      String
+  entity      String
+  entityId    String
+  changes     Json?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+}

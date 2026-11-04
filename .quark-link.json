@@ -1,0 +1,20 @@
+{
+	"quarkVersion": "latest",
+	"quarkSourcePath": "../../quark",
+	"scaffoldedDate": "2026-11-04T03:41:26.865Z",
+	"projectName": "expense-tracker",
+	"requiredPackages": [
+		"db",
+		"config",
+		"ui"
+	],
+	"packages": [
+		"db",
+		"config",
+		"ui"
+	],
+	"featureVersions": {},
+	"authAllowSignup": true,
+	"hasWorker": false,
+	"brief": "Expense tracker: track expenses and categories with full CRUD"
+}

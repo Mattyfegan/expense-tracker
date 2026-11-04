@@ -1,0 +1,21 @@
+{
+	"name": "@expense-tracker/config",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "src/index.js",
+	"exports": {
+		".": "./src/index.js",
+		"./rate-limit": "./src/rate-limit.js",
+		"./app-url": "./src/app-url.js",
+		"./environment": "./src/environment.js",
+		"./oauth": "./src/oauth.js",
+		"./load-config": "./src/load-config.js",
+		"./validate-env": "./src/validate-env.js",
+		"./redis": "./src/redis.js"
+	},
+	"dependencies": {
+		"@usequark/quark-core": "^2.0.0",
+		"ioredis": "^6.0.0",
+		"zod": "^4.6.5"
+	}
+}

@@ -1,0 +1,144 @@
+{
+	"$schema": "https://v2-10-12.turborepo.dev/schema.json",
+	"ui": "stream",
+	"globalEnv": [
+		"GITHUB_OUTPUT",
+		"npm_execpath",
+		"npm_lifecycle_event",
+		"QUARK_SKIP_AUTO_CLEAN",
+		"QUARK_SKIP_DEV_PREFLIGHT",
+		"QUARK_SKIP_GIT_INIT",
+		"CHECK_AUDIT_FIXTURE"
+	],
+	"tasks": {
+		"clean": {
+			"cache": false
+		},
+		"build": {
+			"dependsOn": ["^build", "db:generate"],
+			"outputs": ["dist/**", ".next/**"],
+			"env": ["NODE_ENV"],
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB",
+				"APP_URL",
+				"ALLOW_INDEXING",
+				"PORT",
+				"NEXTAUTH_SECRET",
+				"AUTH_SECRET"
+			]
+		},
+		"lint": {
+			"outputs": []
+		},
+		"test": {
+			"dependsOn": ["^build", "db:generate"],
+			"outputs": [],
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB",
+				"REDIS_URL",
+				"REDIS_HOST",
+				"REDIS_PORT",
+				"NEXTAUTH_SECRET",
+				"AUTH_SECRET",
+				"APP_URL",
+				"ALLOW_INDEXING",
+				"PORT"
+			]
+		},
+		"db:generate": {
+			"cache": false,
+			"outputs": ["node_modules/.prisma/client"],
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB"
+			]
+		},
+		"db:migrate:deploy": {
+			"cache": false,
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB"
+			]
+		},
+		"db:push": {
+			"cache": false,
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB"
+			]
+		},
+		"db:seed": {
+			"cache": false,
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB",
+				"SEED_PROFILE",
+				"ADMIN_EMAIL",
+				"ADMIN_PASSWORD",
+				"ADMIN_NAME"
+			]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true,
+			"passThroughEnv": [
+				"DATABASE_URL",
+				"PORT",
+				"POSTGRES_HOST",
+				"POSTGRES_PORT",
+				"POSTGRES_USER",
+				"POSTGRES_PASSWORD",
+				"POSTGRES_DB",
+				"REDIS_URL",
+				"REDIS_HOST",
+				"REDIS_PORT",
+				"MAIL_HOST",
+				"MAIL_SMTP_PORT",
+				"MAIL_UI_PORT",
+				"NEXTAUTH_URL",
+				"NEXTAUTH_SECRET",
+				"AUTH_SECRET",
+				"APP_URL",
+				"ALLOW_INDEXING",
+				"WORKER_CONCURRENCY",
+				"STORAGE_PROVIDER",
+				"STORAGE_LOCAL_DIR",
+				"S3_BUCKET",
+				"S3_REGION",
+				"S3_ENDPOINT",
+				"S3_ACCESS_KEY_ID",
+				"S3_SECRET_ACCESS_KEY",
+				"S3_PUBLIC_URL",
+				"UPLOAD_MAX_SIZE",
+				"UPLOAD_ALLOWED_TYPES",
+				"EXPO_PUBLIC_API_URL"
+			]
+		}
+	}
+}

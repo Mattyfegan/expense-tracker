@@ -1,0 +1,58 @@
+{
+	"name": "@expense-tracker/root",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"description": "My Quark project",
+	"main": "index.js",
+	"scripts": {
+		"clean": "node scripts/clean-workspace.mjs",
+		"clean:check": "node scripts/clean-workspace.mjs --check",
+		"clean:deep": "node scripts/clean-workspace.mjs --deep",
+		"build": "dotenv -- turbo run build",
+		"dev": "dotenv -- node scripts/dev-preflight.mjs && dotenv -- turbo run dev",
+		"dev:mobile": "pnpm --filter @expense-tracker/mobile start",
+		"build:mobile": "pnpm --filter @expense-tracker/mobile export",
+		"lint": "turbo run lint",
+		"standards": "node scripts/check-standards.mjs",
+		"check:loading": "node scripts/check-loading.mjs",
+		"test": "turbo run test",
+		"docker:up": "docker compose up -d",
+		"docker:down": "docker compose down",
+		"docker:clean": "docker compose down -v",
+		"db:generate": "turbo run db:generate",
+		"db:migrate": "pnpm --filter ./packages/db db:migrate",
+		"db:migrate:deploy": "pnpm --filter ./packages/db db:migrate:deploy",
+		"db:push": "turbo run db:push",
+		"db:seed": "turbo run db:seed",
+		"db:studio": "turbo run db:studio",
+		"doctor": "node scripts/doctor.js",
+		"doctor:fix": "node scripts/doctor.js --fix",
+		"doctor:ci": "node scripts/doctor.js --ci",
+		"prepare": "node scripts/prepare.js"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "pnpm nano-staged",
+		"pre-push": "pnpm check:loading && pnpm test"
+	},
+	"nano-staged": {
+		"**/*.{js,jsx,mjs,json,css}": [
+			"biome format --no-errors-on-unmatched --write",
+			"biome check --no-errors-on-unmatched --write"
+		]
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"packageManager": "pnpm@10.12.1",
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.0",
+		"@types/node": "^24.10.9",
+		"dotenv-cli": "^11.0.0",
+		"nano-staged": "^0.9.0",
+		"simple-git-hooks": "^2.13.1",
+		"tsx": "^4.21.0",
+		"turbo": "^2.8.1"
+	},
+	"pnpm": {}
+}

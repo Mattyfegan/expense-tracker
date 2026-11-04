@@ -1,0 +1,38 @@
+{
+	"name": "@expense-tracker/db",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "",
+	"main": "src/index.js",
+	"exports": {
+		".": "./src/index.js",
+		"./umami": "./src/umami.js"
+	},
+	"scripts": {
+		"test": "node --test 'src/**/*.test.js'",
+		"lint": "biome format --write && biome check --write",
+		"db:generate": "prisma generate",
+		"db:migrate": "prisma migrate dev",
+		"db:migrate:deploy": "prisma migrate deploy",
+		"db:push": "prisma db push",
+		"db:seed": "prisma db seed",
+		"db:studio": "prisma studio"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"packageManager": "pnpm@10.12.1",
+	"devDependencies": {
+		"@faker-js/faker": "^10.6.0",
+		"bcryptjs": "^3.0.3",
+		"prisma": "^7.10.0",
+		"@expense-tracker/config": "workspace:*"
+	},
+	"dependencies": {
+		"@prisma/adapter-pg": "^7.10.0",
+		"@prisma/client": "^7.10.0",
+		"@usequark/quark-core": "^2.0.0",
+		"pg": "^8.23.0",
+		"zod": "^4.6.5"
+	}
+}

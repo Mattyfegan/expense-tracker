@@ -1,0 +1,172 @@
+---
+description: Quark project conventions for expense-tracker. Covers all layers: UI, backend, database, auth, jobs, testing, and deployment.
+alwaysApply: true
+---
+
+# Quark Project: expense-tracker
+
+Package scope: `@expense-tracker` - use this for ALL workspace packages.
+Scaffolded: 2026-11-04
+
+---
+
+## Non-Negotiable Rules
+
+1. **ESM only.** Always `import`/`export`. Never `require()` or `module.exports`.
+2. **No authored TypeScript.** Plain `.js` and `.jsx` files only - no repo-authored `.ts`, `.tsx`, or type annotations. Generated code is the only exception.
+3. **Validate everything at boundaries.** Server Actions and API routes must use Zod. No raw `req.body` access without parsing.
+4. **Use AppError at runtime boundaries.** Throw `AppError` / `ValidationError` / `NotFoundError` from `@usequark/quark-core/errors` in application/runtime code. Native `Error` is reserved for library, bootstrap, CLI, and test code.
+5. **Log with createLogger in runtime code.** Use `createLogger(name)` from `@usequark/quark-core` for application/runtime code. Console output is reserved for bootstrap, CLI, and test code.
+6. **DB models always have timestamps.** Every Prisma model: `createdAt DateTime @default(now())` + `updatedAt DateTime @updatedAt`.
+7. **Workspace import scope.** Use `@expense-tracker/*` for local packages. Never `@usequark/quark-db`, `@usequark/quark-config`, etc.
+8. **Co-located tests.** `feature.test.js` lives next to `feature.js`. Tests use `node --test` - no Jest, no Vitest.
+
+---
+
+## Import Reference
+
+```javascript
+// ✅ Workspace packages - always @expense-tracker/*:
+import { prisma, user, post }    from "@expense-tracker/db";
+import { loadConfig }            from "@expense-tracker/config";
+import { Button, Card, Input }   from "@expense-tracker/ui";
+import { JOB_TYPES }             from "@expense-tracker/jobs";
+
+// ✅ Published runtime - @usequark/quark-core:
+import { AppError, ValidationError, NotFoundError } from "@usequark/quark-core/errors";
+import { createLogger, getCurrentSession }          from "@usequark/quark-core";
+import { createQueue, addJob }                      from "@usequark/quark-core";
+import { metrics, cache, storage }                  from "@usequark/quark-core";
+
+// ❌ Never:
+import { Button } from "@/components/ui/button";     // wrong path convention
+import { prisma } from "@usequark/quark-db";        // wrong scope for workspace pkg
+import something  from "@usequark/quark-config";    // wrong scope for workspace pkg
+```
+
+---
+
+## UI & Design System
+
+- Styling: **Tailwind CSS utility classes only**. No inline styles, no CSS modules.
+- Components from `@expense-tracker/ui`. All accept `className` for overrides.
+- Available: `Button`, `Input`, `Label`, `Textarea`, `Select`, `Checkbox`, `Badge`, `Card`/`CardHeader`/`CardTitle`/`CardContent`/`CardFooter`, `Table`/`TableHeader`/`TableBody`/`TableRow`/`TableHead`/`TableCell`, `Skeleton`, `QuarkLogo` *(server)*, `Dialog` *(client)*, `Toast`/`useToast` *(client)*, `ThemeProvider`/`useTheme` *(client)*.
+- Loading states → `<Skeleton>` + `<Suspense>` boundaries.
+- User feedback → `useToast()` (mark component `"use client"`).
+- Modals → `<Dialog>` (mark parent `"use client"`).
+- Default to **Server Components**. Only add `"use client"` when necessary.
+
+---
+
+## Server Action Pattern
+
+```javascript
+"use server";
+import { z } from "zod";
+import { ValidationError, AppError } from "@usequark/quark-core/errors";
+import { getCurrentSession, createLogger } from "@usequark/quark-core";
+import { prisma } from "@expense-tracker/db";
+
+const log = createLogger("action:example");
+const schema = z.object({ title: z.string().min(1).max(255) });
+
+export async function createExample(formData) {
+  const session = await getCurrentSession();
+  if (!session) throw new AppError("Unauthorized", 401);
+
+  const parsed = schema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) throw new ValidationError(parsed.error.flatten());
+
+  const result = await prisma.example.create({ data: parsed.data });
+  log.info("created", { id: result.id });
+  return result;
+}
+```
+
+---
+
+## API Route Pattern
+
+```javascript
+import { NextResponse } from "next/server";
+import { AppError } from "@usequark/quark-core/errors";
+import { createLogger } from "@usequark/quark-core";
+
+const log = createLogger("api:example");
+
+export async function GET(request) {
+  try {
+    return NextResponse.json({ data });
+  } catch (error) {
+    log.error("request failed", { error });
+    if (error instanceof AppError)
+      return NextResponse.json({ error: error.message }, { status: error.statusCode });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+```
+
+---
+
+## Database
+
+- Schema: `packages/db/prisma/schema.prisma`
+- Query helpers: `packages/db/src/queries.js` - add functions here, don't call `prisma.*` directly in components or actions.
+- Always run `pnpm db:generate` after schema changes, then `pnpm db:migrate`.
+
+---
+
+## Auth
+
+```javascript
+import { getCurrentSession } from "@usequark/quark-core";
+
+const session = await getCurrentSession();       // null if unauthenticated
+if (!session) redirect("/login");                // Server Component
+if (!session) throw new AppError("Unauthorized", 401);  // Server Action / API
+if (session.user.role !== "ADMIN") throw new AppError("Forbidden", 403);
+```
+
+---
+
+## Background Jobs
+
+```javascript
+// Dispatch (from Server Action or API route):
+import { createQueue, addJob } from "@usequark/quark-core";
+import { JOB_TYPES } from "@expense-tracker/jobs";
+const queue = createQueue("default");
+await addJob(queue, JOB_TYPES.MY_JOB, { userId });
+
+// Handle (apps/worker/src/handlers/):
+import { createLogger } from "@usequark/quark-core";
+const log = createLogger("job:my-job");
+export async function handleMyJob({ data }) { log.info("processing", data); }
+```
+
+---
+
+## Testing
+
+```javascript
+import { test } from "node:test";
+import assert from "node:assert";
+
+test("feature", async (t) => {
+  await t.test("does X", async () => {
+    assert.strictEqual(actual, expected);
+  });
+});
+```
+
+---
+
+## Environment
+
+New env vars must be registered in `packages/config/src/validate-env.js` before use. Load config via `loadConfig()` from `@expense-tracker/config`.
+
+---
+
+## Deployment
+
+Railway: two services (`web` + `worker`). Migrations auto-run on deploy via `preDeploy` in `.railway/railway.ts`. Env vars managed in Railway dashboard - never committed.
