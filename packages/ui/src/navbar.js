@@ -7,10 +7,10 @@ const mobileShellCls =
 	"relative w-full border-b border-(--navbar-border) bg-(--navbar-mobile-bg) shadow-[var(--navbar-inset-shadow)]";
 const mobileShellOpenCls =
 	"relative w-full border-b border-transparent bg-(--navbar-mobile-bg) shadow-[var(--navbar-inset-shadow)]";
-const containerCls = "mx-auto w-full px-4 sm:px-6 lg:px-8";
-const desktopInnerCls = "flex h-[4.5rem] items-center justify-center gap-6";
-const leftZoneCls = "flex items-center mr-auto";
-const rightZoneCls = "flex items-center justify-end ml-auto";
+const containerCls = "mx-auto w-full";
+const desktopInnerCls = "grid grid-cols-[1fr_auto_1fr] items-center";
+const leftZoneCls = "flex items-center";
+const rightZoneCls = "flex items-center justify-end";
 const logoCls =
 	"inline-flex items-center gap-2.5 rounded-(--radius-default) px-1.5 py-1 font-semibold tracking-wide text-(--navbar-text) transition-colors hover:text-(--navbar-logo-hover)";
 const markCls =
@@ -18,7 +18,7 @@ const markCls =
 const centerNavCls = "flex min-w-0 justify-center";
 const desktopListCls = "flex items-center gap-3";
 const desktopLinkCls =
-	"inline-flex h-10 items-center rounded-(--radius-default) px-3.5 font-medium text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
+	"inline-flex h-10 items-center rounded-(--radius-default) px-3.5 font-medium text-lg text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
 
 const desktopDropdownWrapCls =
 	"group inline-flex cursor-pointer items-center rounded-(--radius-default) transition-colors hover:bg-(--navbar-hover-bg)";
@@ -80,7 +80,16 @@ function safeLinks(links) {
 }
 
 function renderLogo(logo) {
-	if (React.isValidElement(logo)) {
+	// `React.isValidElement` is unreliable for elements passed across the
+	// Server/Client boundary (React 19 tags them with a transitional `$$typeof`),
+	// so detect the text case by type instead: strings/numbers render the mark,
+	// everything else (elements, lazy references) renders as-is.
+	if (
+		logo !== null &&
+		logo !== undefined &&
+		typeof logo !== "string" &&
+		typeof logo !== "number"
+	) {
 		return logo;
 	}
 
@@ -186,7 +195,10 @@ export function Navbar({
 			{ className: `${containerCls} ${maxWidthClassName}`.trim() },
 			React.createElement(
 				"div",
-				{ className: desktopInnerCls },
+				{
+					className: desktopInnerCls,
+					style: { height: "var(--navbar-desktop-height)" },
+				},
 				React.createElement(
 					"div",
 					{ className: leftZoneCls },

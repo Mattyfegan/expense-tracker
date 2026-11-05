@@ -45,6 +45,11 @@ export const categorySchema = z.object({
 		.trim()
 		.min(1, "Name is required")
 		.max(50, "Name must be 50 characters or fewer"),
+	description: z
+		.string()
+		.trim()
+		.max(255, "Description must be 255 characters or fewer")
+		.optional(),
 });
 
 function isFutureDate(value) {

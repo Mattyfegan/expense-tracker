@@ -37,7 +37,7 @@ This project was built using the [OpenCode](https://opencode.ai) harness with **
 - [x] **Milestone 3 — Routes & actions**
   Wire the helpers to the web via Server Components and Zod-validated Server Actions. *Done when:* create/edit/delete work in the browser and bad input is rejected. Consider and test edge cases.
 
-- [ ] **Milestone 4 — UI**
+- [x] **Milestone 4 — UI**
   Build the pages and forms with the shared UI kit. *Done when:* every CRUD action is reachable with proper loading/empty/error states.
 
 - [ ] **Milestone 5 — Tests, lint & build**
