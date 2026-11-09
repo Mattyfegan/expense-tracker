@@ -23,6 +23,7 @@ import AppNav from "../_components/AppNav.js";
 import AddExpenseDialog from "./AddExpenseDialog.js";
 import { deleteExpense } from "./actions.js";
 import EditExpenseDialog from "./EditExpenseDialog.js";
+import ExportExpensesButton from "./ExportExpensesButton.js";
 import Filters from "./Filters.js";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +68,13 @@ export default async function ExpensesPage({ searchParams }) {
 	const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 	const categoryOptions = categories.map((c) => ({ id: c.id, name: c.name }));
 
+	const exportParams = new URLSearchParams();
+	if (q) exportParams.set("q", q);
+	if (categoryId) exportParams.set("categoryId", categoryId);
+	exportParams.set("sort", sortField);
+	exportParams.set("dir", sortDir);
+	const exportHref = `/api/expenses/export?${exportParams.toString()}`;
+
 	function href(pageNum) {
 		const sp = new URLSearchParams();
 		if (q) sp.set("q", q);
@@ -101,7 +109,10 @@ export default async function ExpensesPage({ searchParams }) {
 							Review, filter, and update every transaction in one place.
 						</p>
 					</div>
-					<AddExpenseDialog categories={categoryOptions} />
+					<div className="flex items-center gap-2">
+						<AddExpenseDialog categories={categoryOptions} />
+						<ExportExpensesButton href={exportHref} />
+					</div>
 				</div>
 
 				<Filters categories={categoryOptions} q={q} categoryId={categoryId} />
