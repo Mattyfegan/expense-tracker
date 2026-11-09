@@ -1,31 +1,11 @@
 "use server";
 
-import { expense, expenseSchema } from "@expense-tracker/db";
+import { expense } from "@expense-tracker/db";
 import { createLogger } from "@usequark/quark-core/core";
 import { revalidatePath } from "next/cache";
+import { normalizeExpense, parseExpense } from "./validation.js";
 
 const log = createLogger("expense:action");
-
-function normalize(data) {
-	return {
-		description: data.description,
-		amount: data.amount,
-		date: data.date,
-		note: data.note?.trim() || null,
-		categoryId: data.categoryId,
-	};
-}
-
-function parse(formData) {
-	const result = expenseSchema.safeParse(Object.fromEntries(formData));
-	if (!result.success) {
-		return {
-			error: result.error.issues[0]?.message ?? "Invalid input",
-			data: null,
-		};
-	}
-	return { error: null, data: result.data };
-}
 
 function refresh() {
 	revalidatePath("/expenses");
@@ -33,11 +13,11 @@ function refresh() {
 }
 
 export async function createExpense(_prevState, formData) {
-	const { error, data } = parse(formData);
+	const { error, data } = parseExpense(formData);
 	if (error) return { error, success: false };
 
 	try {
-		const created = await expense.create(normalize(data));
+		const created = await expense.create(normalizeExpense(data));
 		log.info("expense created", { id: created.id });
 	} catch (err) {
 		log.error("expense create failed", { message: err?.message });
@@ -53,11 +33,11 @@ export async function createExpense(_prevState, formData) {
 
 export async function updateExpense(_prevState, formData) {
 	const id = String(formData.get("id"));
-	const { error, data } = parse(formData);
+	const { error, data } = parseExpense(formData);
 	if (error) return { error, success: false };
 
 	try {
-		await expense.update(id, normalize(data));
+		await expense.update(id, normalizeExpense(data));
 		log.info("expense updated", { id });
 	} catch (err) {
 		log.error("expense update failed", { id, message: err?.message });

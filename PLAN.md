@@ -40,7 +40,7 @@ Each layer does one job:
 - [x] Milestone 2 — Query helpers (CRUD layer)
 - [x] Milestone 3 — Routes & actions (mutation boundary)
 - [] Milestone 4 — UI
-- [] Milestone 5 — Tests, lint, build
+- [x] Milestone 5 — Tests, lint, build
 
 ---
 
@@ -266,9 +266,9 @@ it can actually ship. This is the "professional finishing" milestone.
 
 **Done when:**
 
-- [ ] `pnpm test` passes
-- [ ] `pnpm lint` is clean
-- [ ] `pnpm build` succeeds
+- [x] `pnpm test` passes
+- [x] `pnpm lint` is clean
+- [x] `pnpm build` succeeds
 
 **Concepts learned:** Automated testing, linting, production builds.
 

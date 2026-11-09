@@ -1,9 +1,6 @@
 import { getAppUrl } from "@expense-tracker/config";
 import { isWebsiteIndexable } from "../lib/seo/indexing.js";
-import {
-	buildSitemapEntries,
-	STATIC_SITEMAP_ROUTES,
-} from "../lib/sitemap-entries.js";
+import { buildSitemapEntries } from "../lib/sitemap-entries.js";
 
 export const revalidate = 3600;
 

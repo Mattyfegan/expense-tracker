@@ -40,7 +40,7 @@ This project was built using the [OpenCode](https://opencode.ai) harness with **
 - [x] **Milestone 4 — UI**
   Build the pages and forms with the shared UI kit. *Done when:* every CRUD action is reachable with proper loading/empty/error states.
 
-- [ ] **Milestone 5 — Tests, lint & build**
+- [x] **Milestone 5 — Tests, lint & build**
   Prove the app works and compiles for production. *Done when:* `pnpm test`, `pnpm lint`, and `pnpm build` all pass.
 
 ## Getting Started
