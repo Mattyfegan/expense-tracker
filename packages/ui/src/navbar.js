@@ -7,23 +7,23 @@ const mobileShellCls =
 	"relative w-full border-b border-(--navbar-border) bg-(--navbar-mobile-bg) shadow-[var(--navbar-inset-shadow)]";
 const mobileShellOpenCls =
 	"relative w-full border-b border-transparent bg-(--navbar-mobile-bg) shadow-[var(--navbar-inset-shadow)]";
-const containerCls = "mx-auto w-full";
-const desktopInnerCls = "grid grid-cols-[1fr_auto_1fr] items-center";
+const containerCls = "mx-auto w-full px-4 sm:px-6";
+const desktopInnerCls = "grid items-center";
 const leftZoneCls = "flex items-center";
 const rightZoneCls = "flex items-center justify-end";
 const logoCls =
 	"inline-flex items-center gap-2.5 rounded-(--radius-default) px-1.5 py-1 font-semibold tracking-wide text-(--navbar-text) transition-colors hover:text-(--navbar-logo-hover)";
 const markCls =
 	"inline-flex h-8 w-8 items-center justify-center rounded-(--radius-default) border border-(--navbar-mark-border) bg-(--navbar-mark-bg) font-bold text-(--navbar-mark-text)";
-const centerNavCls = "flex min-w-0 justify-center";
+const centerNavCls = "flex min-w-0";
 const desktopListCls = "flex items-center gap-3";
 const desktopLinkCls =
-	"inline-flex h-10 items-center rounded-(--radius-default) px-3.5 font-medium text-lg text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
+	"inline-flex h-10 items-center rounded-(--radius-default) px-3.5 font-semibold text-lg text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
 
 const desktopDropdownWrapCls =
 	"group inline-flex cursor-pointer items-center rounded-(--radius-default) transition-colors hover:bg-(--navbar-hover-bg)";
 const desktopDropdownLinkCls =
-	"flex items-center font-medium text-(--navbar-text-muted) transition-colors group-hover:text-(--navbar-hover-text)";
+	"flex items-center font-semibold text-(--navbar-text-muted) transition-colors group-hover:text-(--navbar-hover-text)";
 const desktopDropdownChevronCls =
 	"flex items-center px-2 pt-1 text-(--navbar-text-muted) transition-colors group-hover:text-(--navbar-hover-text) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navbar-ring)] rounded-r-(--radius-default)";
 const actionCls =
@@ -35,11 +35,11 @@ const mobileToggleCls =
 const mobilePanelWrapCls =
 	"absolute inset-x-0 top-full z-[80] overflow-y-auto overscroll-contain [touch-action:pan-y] [-webkit-overflow-scrolling:touch] origin-top";
 const mobilePanelCls =
-	"border-y border-(--navbar-border) bg-(--navbar-mobile-panel-bg) will-change-transform transition-all duration-300 ease-out";
+	"origin-top border-y border-(--navbar-border) bg-(--navbar-mobile-panel-bg) shadow-[var(--navbar-dropdown-shadow)] will-change-transform transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
 const mobileLinkCls =
-	"flex min-h-12 w-full items-center justify-between px-4 text-left font-medium text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
+	"flex min-h-12 w-full items-center justify-between px-4 text-left font-semibold text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
 const mobileSubLinkCls =
-	"block px-6 py-2 text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
+	"block px-6 py-2 font-semibold text-(--navbar-text-muted) transition-colors hover:bg-(--navbar-hover-bg) hover:text-(--navbar-hover-text)";
 const mobileActionWrapCls = "px-3 pb-3 pt-2";
 const mobileActionCls =
 	"inline-flex h-10 w-full items-center justify-center rounded-(--radius-default) border border-(--navbar-action-border) bg-(--navbar-action-bg) px-4 font-semibold text-(--navbar-action-text) transition-colors hover:border-(--navbar-action-hover-border) hover:bg-(--navbar-action-hover-bg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--navbar-ring)]";
@@ -155,11 +155,19 @@ export function Navbar({
 	links = DEFAULT_LINKS,
 	action = DEFAULT_ACTION,
 	maxWidthClassName = "max-w-6xl",
+	navPosition = "center",
 }) {
 	const rootRef = useRef(null);
 	const leaveTimerRef = useRef(null);
 	const [openIndex, setOpenIndex] = useState(null);
 	const navLinks = useMemo(() => safeLinks(links), [links]);
+	const navOnRight = navPosition === "right";
+	const desktopGridCls = navOnRight
+		? action
+			? "grid-cols-[1fr_auto_auto]"
+			: "grid-cols-[1fr_auto]"
+		: "grid-cols-[1fr_auto_1fr]";
+	const desktopNavPositionCls = navOnRight ? "justify-end" : "justify-center";
 	const toggleDesktopDropdown = (index) => {
 		setOpenIndex((state) => (state === index ? null : index));
 	};
@@ -196,7 +204,7 @@ export function Navbar({
 			React.createElement(
 				"div",
 				{
-					className: desktopInnerCls,
+					className: `${desktopInnerCls} ${desktopGridCls}`,
 					style: { height: "var(--navbar-desktop-height)" },
 				},
 				React.createElement(
@@ -210,7 +218,10 @@ export function Navbar({
 				),
 				React.createElement(
 					"nav",
-					{ className: centerNavCls, "aria-label": "Primary navigation" },
+					{
+						className: `${centerNavCls} ${desktopNavPositionCls}`,
+						"aria-label": "Primary navigation",
+					},
 					React.createElement(
 						"ul",
 						{ className: desktopListCls },
@@ -296,11 +307,13 @@ export function Navbar({
 						}),
 					),
 				),
-				React.createElement(
-					"div",
-					{ className: rightZoneCls },
-					renderAction(action),
-				),
+				action || !navOnRight
+					? React.createElement(
+							"div",
+							{ className: rightZoneCls },
+							renderAction(action),
+						)
+					: null,
 			),
 		),
 	);
@@ -343,7 +356,7 @@ export function MobileNavbar({
 		const closeTimer = setTimeout(() => {
 			setIsMenuVisible(false);
 			setOpenSubmenus({});
-		}, 320);
+		}, 220);
 		return () => clearTimeout(closeTimer);
 	}, [menuOpen]);
 
@@ -481,8 +494,8 @@ export function MobileNavbar({
 								{
 									className: `${mobilePanelCls} ${
 										isPanelActive
-											? "translate-y-0 opacity-100"
-											: "-translate-y-6 opacity-0"
+											? "translate-y-0 scale-y-100 opacity-100"
+											: "-translate-y-2 scale-y-[0.98] opacity-0"
 									}`,
 									"aria-label": "Mobile navigation",
 								},

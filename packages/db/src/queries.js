@@ -377,6 +377,24 @@ export const category = {
 			orderBy,
 		});
 	},
+	findAllWithExpenseTotals: async (options = {}) => {
+		const categories = await category.findAll(options);
+		if (categories.length === 0) return categories;
+
+		const totals = await prisma.expense.groupBy({
+			by: ["categoryId"],
+			where: { categoryId: { in: categories.map((item) => item.id) } },
+			_sum: { amount: true },
+		});
+		const totalsByCategory = new Map(
+			totals.map((item) => [item.categoryId, item._sum.amount ?? 0]),
+		);
+
+		return categories.map((item) => ({
+			...item,
+			expenseTotal: totalsByCategory.get(item.id) ?? 0,
+		}));
+	},
 
 	findById: (id) => {
 		return prisma.category.findUnique({

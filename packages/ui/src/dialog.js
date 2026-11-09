@@ -28,18 +28,18 @@ import React, {
  */
 
 const dialogCls =
-	"backdrop:bg-[var(--dialog-backdrop)] border border-(--dialog-border) bg-(--dialog-bg) p-0 w-full max-w-lg rounded-(--radius-default)";
+	"backdrop:bg-[var(--dialog-backdrop)] border-0 bg-(--dialog-bg) p-0 w-full max-w-lg rounded-(--radius-default)";
 
 const headerCls =
-	"flex items-center justify-between border-b border-(--dialog-border) px-5 py-4";
+	"flex items-center justify-between border-b border-(--dialog-border) bg-(--dialog-header-bg) px-5 py-4";
 
 const titleCls =
 	"text-base font-bold tracking-tight text-(--dialog-title-text)";
 
 const closeCls =
-	"flex h-8 w-8 cursor-pointer items-center justify-center text-lg text-(--dialog-text-muted) transition-colors duration-200 linear hover:text-(--dialog-title-text) hover:bg-(--dialog-close-hover-bg) active:bg-(--dialog-close-hover-bg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dialog-close-ring)] rounded-(--radius-default)";
+	"flex h-8 w-8 cursor-pointer items-center justify-center rounded-none text-lg text-(--dialog-close-text) transition-colors duration-200 linear hover:text-(--dialog-title-text) hover:bg-(--dialog-close-hover-bg) active:bg-(--dialog-close-hover-bg) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dialog-close-ring)]";
 
-const bodyCls = "px-5 py-4 text-(--dialog-text-muted)";
+const bodyCls = "bg-(--dialog-body-bg) px-5 py-4 text-(--dialog-text-muted)";
 
 export function Dialog({ open, onClose, title, children, className = "" }) {
 	const ref = useRef(null);

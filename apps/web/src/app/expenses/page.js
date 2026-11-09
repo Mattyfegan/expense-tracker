@@ -1,8 +1,7 @@
 import { category, expense } from "@expense-tracker/db";
 import {
+	Badge,
 	Button,
-	Input,
-	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -13,18 +12,21 @@ import {
 import {
 	ArrowDown,
 	ArrowUp,
+	ChevronLeft,
+	ChevronRight,
 	ChevronsUpDown,
-	Pencil,
 	Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency, formatDate } from "@/lib/format";
 import AppNav from "../_components/AppNav.js";
 import AddExpenseDialog from "./AddExpenseDialog.js";
-import { deleteExpense, updateExpense } from "./actions.js";
+import { deleteExpense } from "./actions.js";
+import EditExpenseDialog from "./EditExpenseDialog.js";
 import Filters from "./Filters.js";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: { absolute: "Expenses" } };
 
 const PAGE_SIZE = 10;
 
@@ -88,18 +90,31 @@ export default async function ExpensesPage({ searchParams }) {
 	return (
 		<div>
 			<AppNav />
-			<main className="mx-auto max-w-6xl space-y-6 px-4 py-8">
-				<div className="flex items-center justify-between">
-					<h1 className="text-2xl font-bold">Expenses</h1>
+			<main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+					<div>
+						<p className="text-xs font-semibold uppercase tracking-[0.18em] text-(--color-primary)">
+							Spending ledger
+						</p>
+						<h1 className="mt-2 text-3xl font-bold tracking-tight">Expenses</h1>
+						<p className="mt-1 text-sm text-(--card-text-muted)">
+							Review, filter, and update every transaction in one place.
+						</p>
+					</div>
 					<AddExpenseDialog categories={categoryOptions} />
 				</div>
 
 				<Filters categories={categoryOptions} q={q} categoryId={categoryId} />
 
 				{expenses.length === 0 ? (
-					<p className="text-sm text-(--card-text-muted)">No expenses found.</p>
+					<div className="rounded-xl border border-dashed border-(--card-border) bg-(--card-bg) px-6 py-12 text-center">
+						<p className="font-semibold">No expenses found</p>
+						<p className="mt-1 text-sm text-(--card-text-muted)">
+							Try changing your filters or add your first expense.
+						</p>
+					</div>
 				) : (
-					<Table>
+					<Table className="min-w-[50rem]">
 						<TableHeader>
 							<TableRow>
 								<TableHead>
@@ -154,26 +169,31 @@ export default async function ExpensesPage({ searchParams }) {
 										/>
 									</Link>
 								</TableHead>
-								<TableHead>Actions</TableHead>
+								<TableHead className="text-right">Actions</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
 							{expenses.map((e) => (
 								<TableRow key={e.id}>
-									<TableCell>{formatDate(e.date)}</TableCell>
-									<TableCell className="break-words">
-										{e.description}
+									<TableCell className="whitespace-nowrap text-(--card-text-muted)">
+										{formatDate(e.date)}
+									</TableCell>
+									<TableCell className="max-w-xs break-words">
+										<span className="font-medium">{e.description}</span>
 										{e.note ? (
-											<span className="text-(--card-text-muted)">
-												{" "}
-												· {e.note}
-											</span>
+											<p className="mt-0.5 text-xs text-(--card-text-muted)">
+												{e.note}
+											</p>
 										) : null}
 									</TableCell>
-									<TableCell>{e.category.name}</TableCell>
-									<TableCell>{formatCurrency(e.amount)}</TableCell>
 									<TableCell>
-										<div className="flex items-center gap-2">
+										<Badge variant="default">{e.category.name}</Badge>
+									</TableCell>
+									<TableCell className="whitespace-nowrap font-semibold tabular-nums">
+										{formatCurrency(e.amount)}
+									</TableCell>
+									<TableCell className="text-right">
+										<div className="flex flex-wrap items-center justify-end gap-2">
 											<form action={deleteExpense}>
 												<input type="hidden" name="id" value={e.id} />
 												<Button
@@ -185,45 +205,17 @@ export default async function ExpensesPage({ searchParams }) {
 													Delete
 												</Button>
 											</form>
-											<details>
-												<summary className="inline-flex h-8 cursor-pointer list-none items-center gap-2 rounded-(--radius-default) border border-(--color-primary) px-3 text-sm font-medium text-(--color-primary) transition-colors hover:bg-(--color-primary-muted) [&::-webkit-details-marker]:hidden">
-													<Pencil className="h-4 w-4" />
-													Edit
-												</summary>
-												<form action={updateExpense} className="space-y-2 py-2">
-													<input type="hidden" name="id" value={e.id} />
-													<Input
-														name="description"
-														defaultValue={e.description}
-														required
-													/>
-													<Input
-														name="amount"
-														type="number"
-														step="0.01"
-														min="0"
-														defaultValue={Number(e.amount)}
-														required
-													/>
-													<Input
-														name="date"
-														type="date"
-														defaultValue={e.date.toISOString().slice(0, 10)}
-														required
-													/>
-													<Select name="categoryId" defaultValue={e.categoryId}>
-														{categories.map((c) => (
-															<option key={c.id} value={c.id}>
-																{c.name}
-															</option>
-														))}
-													</Select>
-													<Input name="note" defaultValue={e.note ?? ""} />
-													<Button type="submit" size="sm" variant="primary">
-														Save
-													</Button>
-												</form>
-											</details>
+											<EditExpenseDialog
+												expense={{
+													id: e.id,
+													description: e.description,
+													amount: Number(e.amount),
+													date: e.date.toISOString(),
+													categoryId: e.categoryId,
+													note: e.note,
+												}}
+												categories={categoryOptions}
+											/>
 										</div>
 									</TableCell>
 								</TableRow>
@@ -233,19 +225,27 @@ export default async function ExpensesPage({ searchParams }) {
 				)}
 
 				{totalPages > 1 ? (
-					<div className="flex items-center gap-4">
+					<div className="flex items-center justify-between gap-4 sm:justify-start">
 						{page > 1 ? (
-							<Button href={href(page - 1)}>Previous</Button>
+							<Button href={href(page - 1)} size="sm" icon={<ChevronLeft />}>
+								Previous
+							</Button>
 						) : (
-							<Button disabled>Previous</Button>
+							<Button disabled size="sm" icon={<ChevronLeft />}>
+								Previous
+							</Button>
 						)}
 						<span className="text-sm text-(--card-text-muted)">
 							Page {page} of {totalPages}
 						</span>
 						{page < totalPages ? (
-							<Button href={href(page + 1)}>Next</Button>
+							<Button href={href(page + 1)} size="sm" icon={<ChevronRight />}>
+								Next
+							</Button>
 						) : (
-							<Button disabled>Next</Button>
+							<Button disabled size="sm" icon={<ChevronRight />}>
+								Next
+							</Button>
 						)}
 					</div>
 				) : null}

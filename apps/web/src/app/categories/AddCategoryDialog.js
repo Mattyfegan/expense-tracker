@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Dialog, Input, Label, Textarea } from "@expense-tracker/ui";
+import { Check, Plus, X } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { createCategory } from "./actions.js";
 
@@ -17,7 +18,7 @@ export default function AddCategoryDialog() {
 
 	return (
 		<>
-			<Button variant="primary" onClick={() => setOpen(true)}>
+			<Button variant="primary" icon={<Plus />} onClick={() => setOpen(true)}>
 				Add category
 			</Button>
 			<Dialog open={open} onClose={() => setOpen(false)} title="Add category">
@@ -44,12 +45,18 @@ export default function AddCategoryDialog() {
 					<div className="flex justify-end gap-2 pt-2">
 						<Button
 							type="button"
-							variant="ghost"
+							variant="danger"
+							icon={<X />}
 							onClick={() => setOpen(false)}
 						>
 							Cancel
 						</Button>
-						<Button type="submit" variant="primary" loading={pending}>
+						<Button
+							type="submit"
+							variant="primary"
+							icon={<Check />}
+							loading={pending}
+						>
 							Save
 						</Button>
 					</div>

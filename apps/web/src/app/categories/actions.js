@@ -39,20 +39,29 @@ export async function createCategory(_prevState, formData) {
 	return { error: null, success: true };
 }
 
-export async function updateCategory(formData) {
+export async function updateCategory(_prevState, formData) {
 	const id = String(formData.get("id"));
 	const result = categorySchema.safeParse({ name: formData.get("name") });
-	if (!result.success) return;
+	if (!result.success) {
+		return {
+			error: result.error.issues[0]?.message ?? "Invalid input",
+			success: false,
+		};
+	}
 
 	try {
 		await category.update(id, result.data);
 		log.info("category updated", { id });
 	} catch (err) {
 		log.error("category update failed", { id, message: err?.message });
-		return;
+		return {
+			error: "Could not update the category. Please try again.",
+			success: false,
+		};
 	}
 
 	refresh();
+	return { error: null, success: true };
 }
 
 export async function deleteCategory(formData) {

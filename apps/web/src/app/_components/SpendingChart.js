@@ -1,43 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import {
 	Area,
 	AreaChart,
 	CartesianGrid,
+	ResponsiveContainer,
 	Tooltip,
 	XAxis,
 	YAxis,
 } from "recharts";
-
-const HEIGHT = 256;
 
 function formatAmount(value) {
 	return `$${Number(value).toLocaleString()}`;
 }
 
 export default function SpendingChart({ data }) {
-	const containerRef = useRef(null);
-	const [width, setWidth] = useState(0);
-
-	useEffect(() => {
-		const el = containerRef.current;
-		if (!el) return;
-
-		const update = () => setWidth(el.getBoundingClientRect().width);
-		update();
-
-		const observer = new ResizeObserver(update);
-		observer.observe(el);
-		return () => observer.disconnect();
-	}, []);
-
 	return (
-		<div ref={containerRef} className="h-64 w-full">
-			{width > 0 ? (
+		<div className="h-56 min-w-0 w-full sm:h-64">
+			<ResponsiveContainer width="100%" height="100%" minWidth={0}>
 				<AreaChart
-					width={width}
-					height={HEIGHT}
 					data={data}
 					margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
 				>
@@ -104,7 +85,7 @@ export default function SpendingChart({ data }) {
 						activeDot={{ r: 5 }}
 					/>
 				</AreaChart>
-			) : null}
+			</ResponsiveContainer>
 		</div>
 	);
 }

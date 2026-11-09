@@ -4,14 +4,14 @@ import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 
 const cardCls =
-	"border border-(--card-border) bg-(--card-bg) transition-colors duration-200 linear";
+	"min-w-0 border border-(--card-border) bg-(--card-bg) transition-colors duration-200 linear";
 
 const headerCls = "flex flex-col space-y-1.5 p-6";
 
 const titleCls =
 	"text-lg font-bold leading-none tracking-tight text-(--card-title-text)";
 
-const contentCls = "p-6 pt-0";
+const contentCls = "min-w-0 p-6 pt-0";
 
 const footerCls = "flex items-center p-6 pt-0";
 

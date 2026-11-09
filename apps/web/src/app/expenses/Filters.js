@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Input, Label, Select } from "@expense-tracker/ui";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -43,8 +44,8 @@ export default function Filters({
 	}
 
 	return (
-		<div className="flex items-end gap-3">
-			<div className="flex-1 space-y-1.5">
+		<div className="grid gap-3 rounded-xl border border-(--card-border) bg-(--card-bg) p-4 shadow-[var(--table-shadow)] sm:grid-cols-[minmax(0,1fr)_14rem_auto] sm:items-end">
+			<div className="min-w-0 space-y-1.5">
 				<Label htmlFor="search">Search</Label>
 				<Input
 					id="search"
@@ -53,7 +54,7 @@ export default function Filters({
 					placeholder="Search description or note"
 				/>
 			</div>
-			<div className="w-64 space-y-1.5">
+			<div className="space-y-1.5">
 				<Label>Category</Label>
 				<Select value={initialCategoryId ?? ""} onChange={handleCategoryChange}>
 					<option value="">All categories</option>
@@ -65,7 +66,7 @@ export default function Filters({
 				</Select>
 			</div>
 			{initialQ || initialCategoryId ? (
-				<Button size="sm" variant="ghost" onClick={clearFilters}>
+				<Button size="sm" variant="ghost" icon={<X />} onClick={clearFilters}>
 					Clear
 				</Button>
 			) : null}

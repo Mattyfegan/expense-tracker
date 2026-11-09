@@ -51,20 +51,24 @@ export async function createExpense(_prevState, formData) {
 	return { error: null, success: true };
 }
 
-export async function updateExpense(formData) {
+export async function updateExpense(_prevState, formData) {
 	const id = String(formData.get("id"));
 	const { error, data } = parse(formData);
-	if (error) return;
+	if (error) return { error, success: false };
 
 	try {
 		await expense.update(id, normalize(data));
 		log.info("expense updated", { id });
 	} catch (err) {
 		log.error("expense update failed", { id, message: err?.message });
-		return;
+		return {
+			error: "Could not update the expense. Please try again.",
+			success: false,
+		};
 	}
 
 	refresh();
+	return { error: null, success: true };
 }
 
 export async function deleteExpense(formData) {

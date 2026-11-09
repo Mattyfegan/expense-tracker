@@ -1,7 +1,7 @@
 import { category } from "@expense-tracker/db";
 import {
+	Badge,
 	Button,
-	Input,
 	Table,
 	TableBody,
 	TableCell,
@@ -9,19 +9,16 @@ import {
 	TableHeader,
 	TableRow,
 } from "@expense-tracker/ui";
-import {
-	ArrowDown,
-	ArrowUp,
-	ChevronsUpDown,
-	Pencil,
-	Trash2,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronsUpDown, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/format";
 import AppNav from "../_components/AppNav.js";
 import AddCategoryDialog from "./AddCategoryDialog.js";
-import { deleteCategory, updateCategory } from "./actions.js";
+import { deleteCategory } from "./actions.js";
+import EditCategoryDialog from "./EditCategoryDialog.js";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: { absolute: "Categories" } };
 
 function SortIndicator({ field, sortField, sortDir }) {
 	if (sortField !== field) {
@@ -44,7 +41,19 @@ export default async function CategoriesPage({ searchParams }) {
 		expenses: { expenses: { _count: sortDir } },
 	}[sortField] ?? { name: sortDir };
 
-	const categories = await category.findAll({ take: 100, orderBy });
+	const categories = await category.findAllWithExpenseTotals({
+		take: 100,
+		orderBy: sortField === "total" ? { name: "asc" } : orderBy,
+	});
+
+	if (sortField === "total") {
+		categories.sort((a, b) => {
+			const difference = Number(a.expenseTotal) - Number(b.expenseTotal);
+			return difference === 0
+				? a.name.localeCompare(b.name)
+				: difference * (sortDir === "asc" ? 1 : -1);
+		});
+	}
 
 	function sortHref(field) {
 		const nextDir = sortField === field && sortDir === "asc" ? "desc" : "asc";
@@ -54,16 +63,31 @@ export default async function CategoriesPage({ searchParams }) {
 	return (
 		<div>
 			<AppNav />
-			<main className="mx-auto max-w-6xl space-y-6 px-4 py-8">
-				<div className="flex items-center justify-between">
-					<h1 className="text-2xl font-bold">Categories</h1>
+			<main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+					<div>
+						<p className="text-xs font-semibold uppercase tracking-[0.18em] text-(--color-primary)">
+							Organize spending
+						</p>
+						<h1 className="mt-2 text-3xl font-bold tracking-tight">
+							Categories
+						</h1>
+						<p className="mt-1 text-sm text-(--card-text-muted)">
+							Keep your expense list tidy with simple, reusable labels.
+						</p>
+					</div>
 					<AddCategoryDialog />
 				</div>
 
 				{categories.length === 0 ? (
-					<p className="text-sm text-(--card-text-muted)">No categories yet.</p>
+					<div className="rounded-xl border border-dashed border-(--card-border) bg-(--card-bg) px-6 py-12 text-center">
+						<p className="font-semibold">No categories yet</p>
+						<p className="mt-1 text-sm text-(--card-text-muted)">
+							Create a category to start organizing your expenses.
+						</p>
+					</div>
 				) : (
-					<Table>
+					<Table className="min-w-[42rem]">
 						<TableHeader>
 							<TableRow>
 								<TableHead>
@@ -92,23 +116,44 @@ export default async function CategoriesPage({ searchParams }) {
 										/>
 									</Link>
 								</TableHead>
-								<TableHead>Actions</TableHead>
+								<TableHead>
+									<Link
+										href={sortHref("total")}
+										className="inline-flex items-center gap-1"
+									>
+										Total spent{" "}
+										<SortIndicator
+											field="total"
+											sortField={sortField}
+											sortDir={sortDir}
+										/>
+									</Link>
+								</TableHead>
+								<TableHead className="text-right">Actions</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
 							{categories.map((c) => (
 								<TableRow key={c.id}>
-									<TableCell className="break-words">
-										{c.name}
+									<TableCell className="max-w-xl break-words">
+										<p className="font-semibold">{c.name}</p>
 										{c.description ? (
 											<p className="text-xs text-(--card-text-muted)">
 												{c.description}
 											</p>
 										) : null}
 									</TableCell>
-									<TableCell>{c._count.expenses}</TableCell>
 									<TableCell>
-										<div className="flex items-center gap-2">
+										<Badge variant="primary">
+											{c._count.expenses}{" "}
+											{c._count.expenses === 1 ? "expense" : "expenses"}
+										</Badge>
+									</TableCell>
+									<TableCell className="whitespace-nowrap font-semibold tabular-nums">
+										{formatCurrency(c.expenseTotal)}
+									</TableCell>
+									<TableCell className="text-right">
+										<div className="flex flex-wrap items-center justify-end gap-2">
 											<form action={deleteCategory}>
 												<input type="hidden" name="id" value={c.id} />
 												<Button
@@ -120,22 +165,9 @@ export default async function CategoriesPage({ searchParams }) {
 													Delete
 												</Button>
 											</form>
-											<details>
-												<summary className="inline-flex h-8 cursor-pointer list-none items-center gap-2 rounded-(--radius-default) border border-(--color-primary) px-3 text-sm font-medium text-(--color-primary) transition-colors hover:bg-(--color-primary-muted) [&::-webkit-details-marker]:hidden">
-													<Pencil className="h-4 w-4" />
-													Rename
-												</summary>
-												<form
-													action={updateCategory}
-													className="space-y-2 py-2"
-												>
-													<input type="hidden" name="id" value={c.id} />
-													<Input name="name" defaultValue={c.name} required />
-													<Button type="submit" size="sm" variant="primary">
-														Save
-													</Button>
-												</form>
-											</details>
+											<EditCategoryDialog
+												category={{ id: c.id, name: c.name }}
+											/>
 										</div>
 									</TableCell>
 								</TableRow>

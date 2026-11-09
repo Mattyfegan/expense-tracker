@@ -18,9 +18,18 @@ import AppNav from "./_components/AppNav.js";
 import SpendingChart from "./_components/SpendingChart.js";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: { absolute: "Dashboard" } };
 
 function monthLabel(date) {
 	return date.toLocaleDateString("en-US", { month: "short" });
+}
+
+function compactDate(date) {
+	return new Date(date).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		timeZone: "UTC",
+	});
 }
 
 export default async function DashboardPage() {
@@ -84,9 +93,12 @@ export default async function DashboardPage() {
 	return (
 		<div>
 			<AppNav />
-			<main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+			<main className="mx-auto min-w-0 max-w-6xl space-y-8 overflow-x-clip px-4 py-8 sm:px-6">
 				<div>
-					<h1 className="text-2xl font-bold">Dashboard</h1>
+					<p className="text-xs font-semibold uppercase tracking-[0.18em] text-(--color-primary)">
+						Overview
+					</p>
+					<h1 className="mt-2 text-3xl font-bold tracking-tight">Dashboard</h1>
 					<p className="mt-1 text-sm text-(--card-text-muted)">
 						Your spending at a glance.
 					</p>
@@ -111,8 +123,8 @@ export default async function DashboardPage() {
 					))}
 				</section>
 
-				<section className="grid gap-8 lg:grid-cols-2">
-					<Card>
+				<section className="grid min-w-0 gap-6 lg:grid-cols-2">
+					<Card className="min-w-0 overflow-hidden">
 						<CardHeader>
 							<CardTitle>Spending by month</CardTitle>
 							<p className="text-xs text-(--card-text-muted)">
@@ -124,16 +136,21 @@ export default async function DashboardPage() {
 						</CardContent>
 					</Card>
 
-					<Card>
+					<Card className="min-w-0 overflow-hidden">
 						<CardHeader>
-							<div className="flex items-center justify-between gap-4">
+							<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 								<div className="space-y-1.5">
 									<CardTitle>Recent transactions</CardTitle>
 									<p className="text-xs text-(--card-text-muted)">
 										Your latest expenses
 									</p>
 								</div>
-								<Button href="/expenses" variant="primary" size="sm">
+								<Button
+									href="/expenses"
+									variant="primary"
+									size="sm"
+									className="self-start sm:self-auto"
+								>
 									View all
 								</Button>
 							</div>
@@ -144,22 +161,35 @@ export default async function DashboardPage() {
 									No expenses yet.
 								</p>
 							) : (
-								<Table>
+								<Table className="min-w-[36rem]">
 									<TableHeader>
 										<TableRow>
-											<TableHead>Date</TableHead>
+											<TableHead className="w-20">Date</TableHead>
 											<TableHead>Description</TableHead>
 											<TableHead>Category</TableHead>
-											<TableHead>Amount</TableHead>
+											<TableHead className="w-24 text-right">Amount</TableHead>
 										</TableRow>
 									</TableHeader>
 									<TableBody>
 										{recent.map((e) => (
 											<TableRow key={e.id}>
-												<TableCell>{formatDate(e.date)}</TableCell>
-												<TableCell>{e.description}</TableCell>
-												<TableCell>{e.category.name}</TableCell>
-												<TableCell>{formatCurrency(e.amount)}</TableCell>
+												<TableCell className="whitespace-nowrap text-xs sm:text-sm">
+													<span className="sm:hidden">
+														{compactDate(e.date)}
+													</span>
+													<span className="hidden sm:inline">
+														{formatDate(e.date)}
+													</span>
+												</TableCell>
+												<TableCell className="max-w-0 break-words">
+													{e.description}
+												</TableCell>
+												<TableCell className="max-w-0 break-words">
+													{e.category.name}
+												</TableCell>
+												<TableCell className="whitespace-nowrap text-right font-semibold tabular-nums">
+													{formatCurrency(e.amount)}
+												</TableCell>
 											</TableRow>
 										))}
 									</TableBody>

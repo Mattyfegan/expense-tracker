@@ -31,7 +31,7 @@
 	 */
 
 	/* Shape */
-	--radius-default: 0px;
+	--radius-default: 0.75rem;
 
 	/* Badge */
 	--badge-min-width: auto;
@@ -91,8 +91,8 @@
 
 	/* Table */
 	--table-head-height: 2.75rem;
-	--table-head-padding-x: 0.75rem;
-	--table-cell-padding: 0.75rem;
+	--table-head-padding-x: 1rem;
+	--table-cell-padding: 1rem;
 
 	/* Navbar */
 	--navbar-desktop-height: 7rem;
@@ -283,7 +283,7 @@
 	 */
 
 	/* ── Button ─────────────────────────────────────────────────────────────── */
-	--btn-radius: var(--radius-default);
+	--btn-radius: 0px;
 	--btn-bg: var(--color-primary-hover);
 	--btn-border: var(--color-primary-hover);
 	--btn-text: #ffffff;
@@ -322,8 +322,11 @@
 	/* ── Dialog ─────────────────────────────────────────────────────────────── */
 	--dialog-bg: var(--color-surface);
 	--dialog-border: var(--color-border);
-	--dialog-title-text: var(--color-text);
+	--dialog-header-bg: var(--color-primary);
+	--dialog-body-bg: var(--color-surface);
+	--dialog-title-text: #ffffff;
 	--dialog-text-muted: var(--color-text-muted);
+	--dialog-close-text: rgb(255 255 255 / 0.85);
 	--dialog-close-hover-bg: var(--color-surface-hover);
 	--dialog-close-ring: var(--color-border-hover);
 	--dialog-backdrop: rgba(0, 0, 0, 0.6);
@@ -331,7 +334,7 @@
 	/* ── Table ──────────────────────────────────────────────────────────────── */
 	--table-bg: var(--color-surface);
 	--table-border: var(--color-border);
-	--table-header-bg: var(--color-surface-hover);
+	--table-header-bg: var(--color-primary);
 	--table-row-hover-bg: color-mix(
 		in srgb,
 		var(--color-surface-hover) 60%,
@@ -342,15 +345,16 @@
 		var(--color-surface-hover) 40%,
 		transparent
 	);
-	--table-head-text: var(--color-text-faint);
+	--table-head-text: #ffffff;
 	--table-cell-text: var(--color-text);
-	--table-sort-icon: var(--color-text-faint);
-	--table-sort-icon-hover: var(--color-text);
-	--table-sort-active: var(--color-primary);
+	--table-sort-icon: rgb(255 255 255 / 0.7);
+	--table-sort-icon-hover: #ffffff;
+	--table-sort-active: #ffffff;
 	--table-ring: color-mix(in srgb, var(--color-primary) 40%, transparent);
+	--table-shadow: 0 8px 24px rgb(15 23 42 / 0.06);
 
 	/* ── Input / Textarea ───────────────────────────────────────────────────── */
-	--input-bg: var(--color-surface);
+	--input-bg: var(--color-surface-hover);
 	--input-border: var(--color-border);
 	--input-text: var(--color-text);
 	--input-placeholder: var(--color-text-faint);
@@ -360,7 +364,7 @@
 	--input-disabled-opacity: 0.3;
 
 	/* ── Select ─────────────────────────────────────────────────────────────── */
-	--select-bg: var(--color-surface);
+	--select-bg: var(--color-surface-hover);
 	--select-border: var(--color-border);
 	--select-text: var(--color-text);
 	--select-text-faint: var(--color-text-faint);
@@ -437,7 +441,7 @@
 	--navbar-text: var(--color-text);
 	--navbar-text-muted: var(--color-text-muted);
 	--navbar-hover-bg: var(--color-surface);
-	--navbar-hover-text: var(--color-text);
+	--navbar-hover-text: var(--color-primary);
 	--navbar-logo-text: var(--color-text);
 	--navbar-logo-hover: var(--color-primary);
 	--navbar-mark-bg: var(--color-primary-muted);
