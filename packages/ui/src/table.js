@@ -2,19 +2,19 @@ import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
 import React from "react";
 
 const wrapperCls =
-	"w-full overflow-auto rounded-(--radius-default) border border-(--table-border) bg-(--table-bg)";
+	"max-w-full overflow-x-auto overscroll-x-contain rounded-xl border border-(--table-border) bg-(--table-bg) shadow-[var(--table-shadow)] [-webkit-overflow-scrolling:touch]";
 
 const tableCls = "w-full caption-bottom text-sm";
 
 const headerCls = "border-b border-(--table-border) bg-(--table-header-bg)";
 
-const bodyCls = "[&_tr:last-child]:border-0";
+const bodyCls =
+	"[&_tr:last-child]:border-0 [&_tr:hover]:bg-[var(--table-row-hover-bg)] [&_tr:active]:bg-[var(--table-row-active-bg)]";
 
-const rowCls =
-	"border-b border-[var(--table-border)] transition-colors hover:bg-[var(--table-row-hover-bg)] active:bg-[var(--table-row-active-bg)]";
+const rowCls = "border-b border-[var(--table-border)] transition-colors";
 
 const headCls =
-	"h-11 text-left align-middle font-medium text-(--table-head-text)";
+	"h-12 text-left align-middle font-semibold text-(--table-head-text)";
 
 const cellCls = "align-middle text-(--table-cell-text)";
 

@@ -27,38 +27,48 @@ function parse(formData) {
 	return { error: null, data: result.data };
 }
 
+function refresh() {
+	revalidatePath("/expenses");
+	revalidatePath("/");
+}
+
 export async function createExpense(_prevState, formData) {
 	const { error, data } = parse(formData);
-	if (error) return { error };
+	if (error) return { error, success: false };
 
 	try {
 		const created = await expense.create(normalize(data));
 		log.info("expense created", { id: created.id });
 	} catch (err) {
 		log.error("expense create failed", { message: err?.message });
-		return { error: "Could not save the expense. Please try again." };
+		return {
+			error: "Could not save the expense. Please try again.",
+			success: false,
+		};
 	}
 
-	revalidatePath("/expenses");
-	revalidatePath("/dashboard");
-	return { error: null };
+	refresh();
+	return { error: null, success: true };
 }
 
-export async function updateExpense(formData) {
+export async function updateExpense(_prevState, formData) {
 	const id = String(formData.get("id"));
 	const { error, data } = parse(formData);
-	if (error) return;
+	if (error) return { error, success: false };
 
 	try {
 		await expense.update(id, normalize(data));
 		log.info("expense updated", { id });
 	} catch (err) {
 		log.error("expense update failed", { id, message: err?.message });
-		return;
+		return {
+			error: "Could not update the expense. Please try again.",
+			success: false,
+		};
 	}
 
-	revalidatePath("/expenses");
-	revalidatePath("/dashboard");
+	refresh();
+	return { error: null, success: true };
 }
 
 export async function deleteExpense(formData) {
@@ -72,6 +82,5 @@ export async function deleteExpense(formData) {
 		return;
 	}
 
-	revalidatePath("/expenses");
-	revalidatePath("/dashboard");
+	refresh();
 }

@@ -18,24 +18,26 @@
 		"@auth/prisma-adapter": "^2.11.3",
 		"@aws-sdk/client-s3": "^3.1140.0",
 		"@aws-sdk/s3-request-presigner": "^3.1140.0",
+		"@expense-tracker/db": "workspace:*",
+		"@expense-tracker/ui": "workspace:*",
 		"@prisma/client": "^7.10.0",
 		"@usequark/quark-core": "^2.0.0",
 		"ioredis": "^6.0.0",
 		"jose": "^6.2.12",
+		"lucide-react": "^1.67.0",
 		"next": "16.3.8",
 		"next-auth": "5.0.0-beta.32",
 		"pg": "^8.23.0",
 		"react": "19.3.1",
 		"react-dom": "19.3.1",
+		"recharts": "^3.10.1",
 		"rrweb": "2.1.6",
-		"zod": "^4.6.5",
-		"@expense-tracker/db": "workspace:*",
-		"@expense-tracker/ui": "workspace:*"
+		"zod": "^4.6.5"
 	},
 	"devDependencies": {
+		"@expense-tracker/config": "workspace:*",
 		"@tailwindcss/postcss": "^4.3.3",
 		"@types/node": "^26.6.2",
-		"tailwindcss": "^4.3.3",
-		"@expense-tracker/config": "workspace:*"
+		"tailwindcss": "^4.3.3"
 	}
 }

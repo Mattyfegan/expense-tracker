@@ -3,15 +3,15 @@ import React from "react";
 import { Spinner } from "./spinner.js";
 
 const base =
-	"inline-flex items-center justify-center font-medium tracking-wide transition-all duration-200 linear cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:opacity-40 disabled:cursor-not-allowed active:opacity-80";
+	"inline-flex items-center justify-center whitespace-nowrap font-semibold tracking-tight transition-all duration-200 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] active:opacity-90";
 
 const variantCls =
 	"bg-(--btn-bg) border border-(--btn-border) text-(--btn-text) rounded-(--btn-radius) hover:brightness-[var(--btn-hover-brightness)] hover:shadow-[var(--btn-hover-shadow)] hover:bg-[var(--btn-hover-bg)] hover:text-[var(--btn-hover-text)] hover:opacity-[var(--btn-hover-opacity)] focus-visible:ring-[var(--btn-ring)]";
 
 const sizes = {
-	sm: "h-8 px-3 text-sm",
+	sm: "h-9 px-3 text-xs",
 	md: "h-10 px-4 text-sm",
-	lg: "h-11 px-6 text-base",
+	lg: "h-12 px-6 text-base",
 };
 
 const iconSizes = {
@@ -76,7 +76,7 @@ export function Button({
 		buttonChildren.push(
 			React.createElement(Spinner, { key: "spinner", className: "h-4 w-4" }),
 		);
-	if (hasIcon) buttonChildren.push(buildIcon(icon, size));
+	if (hasIcon && !loading) buttonChildren.push(buildIcon(icon, size));
 	if (hasLabel) buttonChildren.push(children);
 
 	if (href) {
@@ -91,6 +91,7 @@ export function Button({
 				className: cls,
 				"data-btn-variant": variant,
 				"aria-disabled": loading || undefined,
+				"aria-busy": loading || undefined,
 				...props,
 			},
 			...buttonChildren,
@@ -103,6 +104,7 @@ export function Button({
 			type: buttonType,
 			className: cls,
 			"data-btn-variant": variant,
+			"aria-busy": loading || undefined,
 			disabled: loading || props.disabled,
 			...props,
 		},

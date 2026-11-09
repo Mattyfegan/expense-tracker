@@ -369,13 +369,31 @@ export const file = {
 // Expense.categoryId relation), so one delete removes the whole subtree.
 export const category = {
 	findAll: (options = {}) => {
-		const { skip = 0, take = 50 } = options;
+		const { skip = 0, take = 50, orderBy = { name: "asc" } } = options;
 		return prisma.category.findMany({
 			skip,
 			take,
 			include: { _count: { select: { expenses: true } } },
-			orderBy: { name: "asc" },
+			orderBy,
 		});
+	},
+	findAllWithExpenseTotals: async (options = {}) => {
+		const categories = await category.findAll(options);
+		if (categories.length === 0) return categories;
+
+		const totals = await prisma.expense.groupBy({
+			by: ["categoryId"],
+			where: { categoryId: { in: categories.map((item) => item.id) } },
+			_sum: { amount: true },
+		});
+		const totalsByCategory = new Map(
+			totals.map((item) => [item.categoryId, item._sum.amount ?? 0]),
+		);
+
+		return categories.map((item) => ({
+			...item,
+			expenseTotal: totalsByCategory.get(item.id) ?? 0,
+		}));
 	},
 
 	findById: (id) => {
@@ -408,7 +426,7 @@ export const category = {
  *
  * - categoryId: exact match
  * - start / end: inclusive date range on `date`
- * - q: case-insensitive substring match on `description` and `note`
+ * - q: case-insensitive substring match on `description`, `note`, and category name
  */
 function buildExpenseWhere(options) {
 	const { categoryId, start, end, q } = options;
@@ -428,6 +446,7 @@ function buildExpenseWhere(options) {
 		where.OR = [
 			{ description: { contains: q, mode: "insensitive" } },
 			{ note: { contains: q, mode: "insensitive" } },
+			{ category: { name: { contains: q, mode: "insensitive" } } },
 		];
 	}
 
@@ -437,13 +456,13 @@ function buildExpenseWhere(options) {
 // Expense queries
 export const expense = {
 	findAll: (options = {}) => {
-		const { skip = 0, take = 50 } = options;
+		const { skip = 0, take = 50, orderBy = { date: "desc" } } = options;
 		return prisma.expense.findMany({
 			skip,
 			take,
 			where: buildExpenseWhere(options),
 			include: { category: true },
-			orderBy: { date: "desc" },
+			orderBy,
 		});
 	},
 
@@ -500,5 +519,39 @@ export const expense = {
 			total: total._sum.amount ?? 0,
 			byCategory,
 		};
+	},
+
+	/**
+	 * Total spend per month for the last `months` months (oldest first).
+	 * Each entry is `{ month: Date, total: number }`.
+	 */
+	monthlyTotals: async (months = 6) => {
+		const start = new Date();
+		start.setDate(1);
+		start.setHours(0, 0, 0, 0);
+		start.setMonth(start.getMonth() - (months - 1));
+
+		const rows = await prisma.expense.findMany({
+			where: { date: { gte: start } },
+			select: { date: true, amount: true },
+			orderBy: { date: "asc" },
+		});
+
+		const totals = new Map();
+		for (const row of rows) {
+			const key = `${row.date.getFullYear()}-${row.date.getMonth()}`;
+			totals.set(key, (totals.get(key) ?? 0) + Number(row.amount));
+		}
+
+		const result = [];
+		for (let i = months - 1; i >= 0; i--) {
+			const d = new Date();
+			d.setDate(1);
+			d.setHours(0, 0, 0, 0);
+			d.setMonth(d.getMonth() - i);
+			const key = `${d.getFullYear()}-${d.getMonth()}`;
+			result.push({ month: d, total: totals.get(key) ?? 0 });
+		}
+		return result;
 	},
 };

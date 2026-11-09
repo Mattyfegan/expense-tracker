@@ -39,8 +39,8 @@ Each layer does one job:
 - [x] Milestone 1 — Prisma models
 - [x] Milestone 2 — Query helpers (CRUD layer)
 - [x] Milestone 3 — Routes & actions (mutation boundary)
-- [ ] Milestone 4 — UI
-- [ ] Milestone 5 — Tests, lint, build
+- [] Milestone 4 — UI
+- [] Milestone 5 — Tests, lint, build
 
 ---
 
@@ -239,9 +239,9 @@ using Quark's pre-built component library.
 
 **Done when:**
 
-- [ ] Every CRUD action is reachable from the UI
-- [ ] Money is formatted correctly
-- [ ] Empty, loading, and error states are handled
+- [x] Every CRUD action is reachable from the UI
+- [x] Money is formatted correctly
+- [x] Empty, loading, and error states are handled
 
 **Concepts learned:** Component design — small reusable pieces instead of one giant page.
 
