@@ -3,6 +3,7 @@
 import { expense } from "@expense-tracker/db";
 import { createLogger } from "@usequark/quark-core/core";
 import { revalidatePath } from "next/cache";
+import { getExpensesCsv } from "@/lib/export-expenses.js";
 import { normalizeExpense, parseExpense } from "./validation.js";
 
 const log = createLogger("expense:action");
@@ -64,3 +65,10 @@ export async function deleteExpense(formData) {
 
 	refresh();
 }
+
+export async function exportExpensesCsv() {
+	return getExpensesCsv();
+}
+
+export const exportExpenses = exportExpensesCsv;
+export const exportToCsv = exportExpensesCsv;
